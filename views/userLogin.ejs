@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="wpOceans">
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <title>Vitis Enterprises</title>
+    <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon" />
+    <!-- Font Icons css -->
+    <link rel="stylesheet" href="/css/font-icons.css">
+    <!-- plugins css -->
+    <link rel="stylesheet" href="/css/plugins.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Responsive css -->
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+
+<body>
+
+    <!--=====start page-wrapper =====-->
+    <div class="page-wrapper">
+       
+        <!--  cursor style -->
+        <div class="cursor"></div>
+        <div class="cursor2"></div>
+
+        <div class="wpo-login-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form class="wpo-accountWrapper" id="loginForm">
+                            <div class="wpo-accountInfo">
+                                <div class="wpo-accountInfoHeader">
+                                    <a href="/"><img style="width: 150px;" src="img/logo.png" alt="logo"></a>
+                                    <a class="wpo-accountBtn" href="/user-register">
+                                        <span class="">Create Account</span>
+                                    </a>
+                                </div>
+                                <div class="image">
+                                    <img src="/img/login.png" alt="">
+                                </div>
+                                <div class="back-home">
+                                    <a class="wpo-accountBtn" href="/">
+                                        <span class="">Back To Home</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="wpo-accountForm form-style">
+                                <div class="fromTitle">
+                                    <h2>Login</h2>
+                                    <p>Sign into your Vitis account</p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <label>Email</label>
+                                        <input type="text" id="email" name="email" placeholder="Enter your email id" required>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <div class="form-group">
+                                            <label>Password</label>
+                                            <input class="pwd6" type="password" placeholder="Enter your password" name="password" required>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default reveal" type="button"><i class="ti-eye"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <div class="check-box-wrap">
+                                            <div class="forget-btn">
+                                                <a href="/forgot-password">Forgot Password?</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <!-- Hidden input field for guestCart -->
+                                        <input type="hidden" name="guestCart" id="guestCartInput">
+                                        <button type="submit" class="wpo-accountBtn">Login</button>
+                                    </div>
+                                </div>
+                                <p class="subText">Don't have an account? <a href="/user-register">Create free account</a></p>
+                            </div>
+                        </form>
+                        
+                        <!-- JavaScript to handle form submission and clear localStorage -->
+                     
+                        <script>
+                            document.getElementById('loginForm').addEventListener('submit', async function (event) {
+                                event.preventDefault(); // Prevent the default form submission
+                        
+                                // Fetch guest cart from localStorage
+                                const guestCart = JSON.parse(localStorage.getItem('guestCart')) || [];
+                        
+                                // Set the guestCart data in the hidden input field
+                                document.getElementById('guestCartInput').value = JSON.stringify(guestCart);
+                        
+                                // Create form data
+                                const formData = new FormData(this);
+                        
+                                // Submit the form data using Fetch API
+                                const response = await fetch('/api/auth/user-login', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json', // Set the correct content type
+                                    },
+                                    body: JSON.stringify({
+                                        email: formData.get('email'),
+                                        password: formData.get('password'),
+                                        guestCart: formData.get('guestCart'),
+                                    }),
+                                });
+                        
+                                if (response.ok) {
+                                    // Clear the guest cart from localStorage after successful login
+                                    localStorage.removeItem('guestCart');
+                        
+                                    // Redirect to the home page or any other page
+                                    window.location.href = '/';
+                                } else {
+                                    // Handle login error
+                                    const data = await response.json();
+                                    Toastify({
+                                        text: data.message,
+                                        duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
+                                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                                    }).showToast();
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <!--===== end page-wrapper =====-->
+
+    <script src="js/plugins.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="wpOceans">
+    <link rel="shortcut icon" type="image/png" href="/images/max-logo.png">
+    <title>Maxtron Associates </title>
+    <link href="/css/themify-icons.css" rel="stylesheet">
+    <link href="/css/flaticon.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/owl.carousel.css" rel="stylesheet">
+    <link href="/css/owl.theme.css" rel="stylesheet">
+    <link href="/css/slick.css" rel="stylesheet">
+    <link href="/css/slick-theme.css" rel="stylesheet">
+    <link href="/css/swiper.min.css" rel="stylesheet">
+    <link href="/css/owl.transitions.css" rel="stylesheet">
+    <link href="/css/jquery.fancybox.css" rel="stylesheet">
+    <link href="/css/odometer-theme-default.css" rel="stylesheet">
+    <link href="/sass/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!--=====start page-wrapper =====-->
+    <div class="page-wrapper">
+         <!--===== start preloader =====-->
+         <div class="preloader">
+            <div class="vertical-centered-box">
+                <div class="content">
+                    <div class="loader-circle"></div>
+                    <div class="loader-line-mask">
+                        <div class="loader-line"></div>
+                    </div>
+                    <img class="pre-logo" src="/images/max-logo.png" alt="">
+                </div>
+            </div>
+        </div>
+        <!--===== end preloader =====-->
+
+        <!--  cursor style -->
+        <div class="cursor"></div>
+        <div class="cursor2"></div>
+
+
+        <!--===== Start header =====-->
+        <header id="header">
+            <div class="topbar" style="background-color: #000000;">
+                <div class="container-fluid">
+                    <div class="row align-items-center flex-wrap">
+                        <div class="col-6 d-flex justify-content-start">
+                            <div class="contact-into">
+                                <ul class="social-media d-flex">
+                                    <li><a href="https://wa.me/+919745147000" target="_blank"><img src="/images/icons/facebook.png" alt="Facebook" width="18" height="18"></a></li>
+                                    <li><a href="https://wa.me/+919745147000" target="_blank"><img src="/images/icons/whatsapp.png" alt="LinkedIn" width="18" height="18"></a></li>
+                                    <li><a href="https://wa.me/+919745147000" target="_blank"><img src="/images/icons/instagram.png" alt="Instagram" width="18" height="18"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end">
+                            <ul class="contact-info d-flex" style="font-size: 12px; white-space: nowrap;">
+                                <li>
+                                    <% if (user) { %>
+                                        <a href="/orders">
+                                            My Orders
+                                        </a>
+                                    <% } else { %>
+                                        <a href="/user-login">
+                                            Login
+                                            <span>Now</span>
+                                        </a>
+                                    <% } %>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wpo-site-header wpo-header-style-s9 menu-left">
+                <nav class="navigation navbar navbar-expand-lg navbar-light">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-lg-3 col-md-3 col-3 d-lg-none dl-block">
+                                <div class="mobail-menu">
+                                    <button type="button" class="navbar-toggler open-btn">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar first-angle"></span>
+                                        <span class="icon-bar middle-angle"></span>
+                                        <span class="icon-bar last-angle"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-1 col-1">
+                                <div id="navbar" class="collapse navbar-collapse navigation-holder">
+                                    <button class="menu-close"><i class="ti-close"></i></button>
+                                    <ul class="nav navbar-nav mb-2 mb-lg-0">
+                                        <li class=" image-style-item">
+                                            <a href="/">Home</a>
+                                         
+                                        </li>
+                                        <li class="">
+                                            <a style="color: #a1817b;" href="/shop">Shop</a>
+                                        
+                                        </li>
+                                        <li class="dropdown-services">
+                                            <a href="/services" class="dropdown-toggle" data-toggle="dropdown">Services <span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/polyBagProduction">Poly Bag Production & Supply</a></li>
+                                                <li><a href="/consumablesSupplies">Consumables supplies</a></li>
+                                                <li><a href="/transportation">Bio Medial Waste Transportation Services</a></li>
+                                                <li><a href="/bioWasteHandling">Bio Medical waste handling services</a></li>
+
+                                                <li><a href="/biomining">Biomining services</a></li>
+                                                <!-- <li><a href="/wasteManagement">Waste Management Facility Maintenance</a></li> -->
+                                                <!-- <li><a href="/medicalWasteCollection">Medical Waste Collection</a></li> -->
+                                                <!-- <li><a href="/recyclableWaste">Recyclable Waste Solutions</a></li> -->
+                                            </ul>
+                                        </li>
+                                        <li class="">
+                                            <a href="/about">About Us</a>
+                                       
+                                        </li>
+                                        <li class="">
+                                            <a href="/blogs">Blogs</a>
+                                       
+                                        </li>
+              
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="navbar-header">
+                                    <a class="navbar-brand" href="/"><img src="/images/max-logo.png"
+                                            alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-4 col-2">
+                                <div class="header-right">
+                                 
+                                    <div class="header-user-wrapper">
+                                        <div class="cart-user-contact">
+                                            <button class="user-toggle-btn">
+                                                <% if (user) { %>
+                                                    <img style="width: 20px;" src="/images/logged.svg" alt="">
+                                                <% } else { %>
+                                                    <img  src="/images/user.svg" alt="">
+                                                <% } %>
+                                            </button>
+                                            <div class="header-user-form">
+                                                <ul>
+                                                    <% if (user) { %>
+                                                        <li><a href="/api/auth/user-logout">Logout</a></li>
+                                                        <li><a href="/contact">Orders</a></li>
+                                                        <li><a href="/contact">Contact Us</a></li>
+                                                    <% } else { %>
+                                                        <li><a href="/user-login">Login</a></li>
+                                                        <li><a href="/user-register">Register</a></li>
+                                                        <li><a href="/contact">Contact Us</a></li>
+                                                    <% } %>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                    <li class="shopping-cart-wrapper">
+                                        <a href="/cart">
+                                            <button class="shopping-cart-btn" aria-label="View shopping cart">
+                                                <img src="/images/shopping-cart.svg" alt="Shopping Cart" class="cart-icon">
+                                            </button>
+                                        </a>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end of container -->
+                </nav>
+            </div>
+        </header>
+        <!--===== end of header =====-->
+
+        <!--===== start wpo-page-title =====-->
+        <section class="wpo-page-title">
+            <div class="container">
+                <div class="row">
+                    <div class="col col-xs-12">
+                        <div class="wpo-breadcumb-wrap">
+                            <ol>
+                                <li><a href="/">Home</a></li>
+                                <li>404</li>
+                            </ol>
+                            <h2 class="d-none">hidden content</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- start error-404-section -->
+        <section class="error-404-section section-padding pt-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col col-xs-12">
+                        <div class="content clearfix">
+                            <div class="error">
+                                <img src="/images/error-404.png" alt>
+                            </div>
+                            <div class="error-message">
+                                <h3>Oops! Page Not Found!</h3>
+                                <p>We’re sorry but we can’t seem to find the page you requested. This might be
+                                    because
+                                    you have typed the web address incorrectly.</p>
+                                <a href="/" class="theme-btn">Back to home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+            </div> <!-- end container -->
+        </section>
+        <!-- end error-404-section -->
+
+        <!--===== start wpo-site-footer-section =====-->
+        <footer class="wpo-site-footer">
+            <div class="wpo-upper-footer">
+                <div class="container-fluid ft-main">
+                    <div class="row">
+                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12 fade_bottom">
+                            <div class="widget about-widget">
+                                <div class="logo widget-title">
+                                    <img src="/images/max-logo.png" alt="blog">
+                                </div>
+                                <p class="footer-dis">We specialize in durable waste bags with advanced extrusion technology for reliable, eco-friendly solutions</p>
+                                <div class="social-widget">
+                                    <ul>
+                                        <li>
+                                            <a href="#"><i class="ti-facebook"></i></a>
+             <a class="twitter" href="#">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.37 1.5H21L14.12 10.1 22.51 22.5H15.9L10.94 15.22 4.98 22.5H2.35L9.8 13.2 1.85 1.5H8.6L13.09 8.1 18.37 1.5ZM17.19 20.58H19.06L7.05 3.35H5.04L17.19 20.58Z"/>
+  </svg>
+</a>
+
+
+                                            <a href="#"><i class="ti-linkedin"></i></a>
+                                            <a href="#"><i class="ti-instagram"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-lg-5 col-md-6 col-sm-12 col-12 fade_bottom">
+                            <div class="widget link-widget">
+                                <div class="widget-title">
+                                    <h3>Contact</h3>
+                                </div>
+                                <ul>
+                                    <li class="ft-icons"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16v16H4z"></path>
+                                        <polyline points="4,8 12,14 20,8"></polyline>
+                                      </svg></span>maxtronassociateskerala@gmail.com</li>
+                                    <li class="ft-icons"><span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.11 19.78 19.78 0 0 1-7.08-7.08A19.78 19.78 0 0 1 2 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72 13.5 13.5 0 0 0 1.15 4.92 2 2 0 0 1-.45 2.11L8.5 12.5a16 16 0 0 0 7 7l2.79-2.79a2 2 0 0 1 2.11-.45 13.5 13.5 0 0 0 4.92 1.15A2 2 0 0 1 22 16.92z"></path>
+                                      </svg>
+                                      </span>+91 9745147000</li>
+                                    <li class="ft-icons"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13s-7-8-7-13a7 7 0 0 1 7-7z"></path>
+                                        <circle cx="12" cy="9" r="2.5"></circle>
+                                      </svg></span>Maxtron Associates </li>
+                                    <li class="ft-icons"> Chandranagar, Palakkad ,Kerala,</li>
+                                       <li>678007</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col col-lg-3 col-md-6 col-sm-12 col-12 fade_bottom">
+                            <div class="widget link-widget">
+                                <div class="widget-title">
+                                    <h3>Quick Link</h3>
+                                </div>
+                                <ul>
+                                    <li><a href="/about"><span class="rolling-text">About Us</span> </a></li>
+                                    <li><a href="/shop"><span class="rolling-text">Shop</span></a></li>
+                                    <li><a href="/services"><span class="rolling-text">Services</span> </a></li>
+           
+                                    <li><a href="/blogs"><span class="rolling-text">Blogs</span> </a></li>
+                                    <li><a href="/contact"><span class="rolling-text">Contact</span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                     
+                    </div>
+                </div>
+            </div>
+            <div class="wpo-lower-footer">
+                <div class="container-fluid ">
+                    <div class="row g-0 " >
+                        <div class="col col-lg-6 col-12 ">
+                            <p class="copyrigh "> Copyright &copy; 2025 Trivlogic Pvt Limited. All
+                                Rights Reserved.</p>
+                        </div>
+                        <div class="col col-lg-6 col-12 ">
+                            <ul class="right ft-btm ">
+                                <li><a href="#"><span class="rolling-text">Privace & Policy</span> </a></li>
+                                <li><a href="#"><span class="rolling-text">Terms</span></a></li>
+                                <li><a href="/about"><span class="rolling-text">About us</span></a></li>
+                                <% if (user) { %>
+                                    <li><a href="/api/auth/user-logout"><span class="rolling-text">Logout</span></a></li>
+                                    <% } else { %>
+                                        <li><a href="/user-login"><span class="rolling-text"
+                                                    id="logout-btn">Login</span></a></li>
+                                        <% } %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+          <!-- Mobile Bottom Navbar -->
+          <nav class="mb_navbar_container">
+            <a href="/" class="mb_navbar_item ">
+                <div class="mb_navbar_icon_wrapper">
+                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <span class="mb_navbar_label">Home</span>
+            </a>
+    
+            <a href="/shop" class="mb_navbar_item mb_navbar_active">
+                <div class="mb_navbar_icon_wrapper">
+                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                        <line x1="2" y1="8" x2="22" y2="8"></line>
+                        <line x1="12" y1="8" x2="12" y2="21"></line>
+                        <line x1="7" y1="14.5" x2="7" y2="14.51"></line>
+                        <line x1="17" y1="14.5" x2="17" y2="14.51"></line>
+                    </svg>
+                </div>
+                <span class="mb_navbar_label">Shop</span>
+            </a>
+            <a href="/services" class="mb_navbar_item">
+                <div class="mb_navbar_icon_wrapper">
+                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                        <path d="M9 14h6" />
+                        <path d="M6 10h12" />
+                        <path d="M3 6h18" />
+                    </svg>
+                </div>
+                <span class="mb_navbar_label">Services</span>
+            </a>
+    
+            <% if (user) { %>
+                <a href="/api/auth/user-logout" class="mb_navbar_item">
+                    <div class="mb_navbar_icon_wrapper">
+                        <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="mb_navbar_label">Logout</span>
+                </a>
+                <% } else { %>
+                    <a href="/user-login" class="mb_navbar_item">
+                        <div class="mb_navbar_icon_wrapper">
+                            <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <span class="mb_navbar_label">Login</span>
+                    </a>
+                    <% } %>
+    
+            <a href="/cart" class="mb_navbar_item">
+                <div class="mb_navbar_icon_wrapper">
+                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                  
+                </div>
+                <span class="mb_navbar_label">Cart</span>
+            </a>
+        </nav>
+    <!--===== end page-wrapper =====-->
+
+    <!--===== All JavaScript files =====-->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <!--===== Plugins for this template =====-->
+    <script src="/js/modernizr.custom.js"></script>
+    <script src="/js/jquery-plugin-collection.js"></script>
+    <script src="/js/gsap.js"></script>
+    <script src="/js/gsap-scroll-smoother.js"></script>
+    <script src="/js/SmoothScroll.js"></script>
+    <script src="/js/gsap-scroll-trigger.js"></script>
+    <script src="/js/gsap-split-text.js"></script>
+    <script src="/js/simpleParallax.js"></script>
+    <!--===== Custom script for this template =====-->
+    <script src="/js/script.js"></script>
+    <script src="/js/gsap-script.js"></script>
+</body>
+
+</html>

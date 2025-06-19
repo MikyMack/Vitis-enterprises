@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .success-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .success-icon {
+            font-size: 48px;
+            color: #4CAF50;
+        }
+        .success-message {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #333;
+        }
+        .order-details {
+            font-size: 18px;
+            color: #555;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✔️</div>
+        <div class="success-message">Payment Successful!</div>
+        <div class="order-details">
+            <p>Your order has been placed successfully.</p>
+            <p>Transaction ID: <%= txnid %></p>
+            <p>Order ID: <%= order._id %></p>
+        </div>
+        <a href="/" class="btn">Continue Shopping</a>
+    </div>
+</body>
+</html>

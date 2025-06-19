@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to PayU...</title>
+</head>
+<body>
+    <form action="<%= payuUrl %>" method="POST" id="payuForm">
+        <% for (let key in payuData) { %>
+            <input type="hidden" name="<%= key %>" value="<%= payuData[key] %>">
+        <% } %>
+    </form>
+
+    <script>
+        // Automatically submit the form
+        document.getElementById("payuForm").submit();
+    </script>
+</body>
+</html>
