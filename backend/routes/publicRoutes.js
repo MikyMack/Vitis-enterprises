@@ -6,6 +6,9 @@ const User = require('../models/User');
 const Blog = require('../models/Blog');
 const Cart = require('../models/Cart');
 const Order = require('../models/Order');
+const MainBanner = require('../models/MainBanner');
+const BannerTwo = require('../models/BannerTwo');
+const BannerThree = require('../models/BannerThree');
 // const Testimonial = require('../models/Testimonial');
 const jwt = require('jsonwebtoken');
 
@@ -13,34 +16,72 @@ router.get('/', async (req, res) => {
     try {
         const token = req.cookies.token;
         let user = null;
-        let products = [];
+        let productsGeneral = [];
+        let productsMedical = [];
         let blogs = [];
-        
+        let cartCount = 0;
+
         if (token) {
             try {
                 const decoded = jwt.verify(token, process.env.SESSION_SECRET);
                 user = await User.findById(decoded.id);
+                // Fetch cart count for logged-in user
+                const cart = await Cart.findOne({ userId: decoded.id });
+                if (cart && Array.isArray(cart.items)) {
+                    cartCount = cart.items.length;
+                }
             } catch (err) {
                 console.error("JWT Verification Error:", err);
             }
         }
+        const mainBanner = await MainBanner.find({ isActive: true });
+        const bannerTwo = await BannerTwo.find({ isActive: true });
+        const bannerThree = await BannerThree.find({ isActive: true });
 
         try {
-            products = await Product.find();
+            productsGeneral = await Product.find({ toggled: true, category: "General" });
         } catch (err) {
-            console.error("Error fetching products:", err);
+            console.error("Error fetching General products:", err);
         }
+
+        try {
+            productsMedical = await Product.find({ toggled: true, category: "Medical" });
+        } catch (err) {
+            console.error("Error fetching Medical products:", err);
+        }
+        const allProducts = await Product.find({ toggled: true }).sort({ createdAt: -1 }).limit(10);
 
         try {
             blogs = await Blog.find();
         } catch (err) {
             console.error("Error fetching blogs:", err);
         }
-
-        res.render('index', { title: 'Home', user, products, blogs }); 
+        res.render('index', { 
+            title: 'Home', 
+            user, 
+            productsGeneral, 
+            productsMedical, 
+            blogs,
+            mainBanner,
+            bannerTwo,
+            bannerThree,
+            allProducts,
+            cartCount
+        }); 
     } catch (error) {
-     const  blogs = await Blog.find();
-        res.render('index', { title: 'Home', user: null, products: [], blogs});
+        const blogs = await Blog.find();
+        res.render('index', { 
+            title: 'Home', 
+            user: null, 
+            productsGeneral: [], 
+            productsMedical: [], 
+            blogs,
+            mainBanner: [],
+            bannerTwo: [],
+            bannerThree: [],
+            allProducts: [],
+            cartCount: 0
+        });
     }
 });
 
@@ -73,9 +114,6 @@ router.get("/reset-password", (req, res) => {
     res.render("resetPassword");
 });
 
-
-
-
 // About Page
 router.get('/about', async (req, res) => {
     try {
@@ -97,29 +135,82 @@ router.get('/about', async (req, res) => {
 });
 // About Page
 router.get('/shop', async (req, res) => {
-    const products = await Product.find();
     try {
-      
+        // Pagination
+        const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+        const perPage = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 12;
+        const skip = (page - 1) * perPage;
+
+        // Filters
+        const sort = req.query.sort || ''; // '' means default sorting
+        const category = req.query.category;
+
+        let filter = { toggled: true };
+        if (category && (category === "General" || category === "Medical")) {
+            filter.category = category;
+        }
+
+        let sortObj = {};
+        if (sort === 'popularity') {
+            // You can define your own popularity logic here, for now, fallback to latest
+            sortObj = { _id: -1 };
+        } else if (sort === 'new') {
+            sortObj = { _id: -1 };
+        } else if (sort === 'price-asc') {
+            sortObj = { basePrice: 1 };
+        } else if (sort === 'price-desc') {
+            sortObj = { basePrice: -1 };
+        } else {
+            sortObj = { _id: -1 }; // Default: latest
+        }
+
+        const totalProducts = await Product.countDocuments(filter);
+
+        const products = await Product.find(filter)
+            .sort(sortObj)
+            .skip(skip)
+            .limit(perPage);
+
         const token = req.cookies.token;
         let user = null;
         if (token) {
             try {
                 const decoded = jwt.verify(token, process.env.SESSION_SECRET);
-
                 user = await User.findById(decoded.id);
             } catch (err) {
                 console.error("JWT Verification Error:", err);
             }
         }
-        // Fetch products from the database
-        res.render('shop', { title: 'Shop page', user, products });
+        const categories = ["General", "Medical"];
+
+        res.render('shop', { 
+            title: 'Shop page', 
+            user, 
+            products, 
+            page, 
+            perPage,
+            totalPages: Math.ceil(totalProducts / perPage),
+            totalProducts,
+            sort,
+            selectedCategory: category || '',
+            categories
+        });
     } catch (error) {
-        res.status(500).render('shop', { title: 'Shop page', user: null, products});
+        console.error("Shop Page Error:", error);
+        res.status(500).render('shop', { 
+            title: 'Shop page', 
+            user: null, 
+            products: [],
+            page: 1,
+            perPage: 12,
+            totalPages: 1,
+            totalProducts: 0,
+            sort: '',
+            selectedCategory: '',
+            categories: ["General", "Medical"]
+        });
     }
 });
-
-
-
 
 // Contact Page
 router.get('/services', async (req, res) => {
@@ -309,14 +400,13 @@ router.get('/checkout', async (req, res) => {
 // });
 
 // Product Details Page
-router.get('/product-details/:id', async (req, res) => {
+router.get('/product/:id', async (req, res) => {
     try {
         const token = req.cookies.token;
         let user = null;
         if (token) {
             try {
                 const decoded = jwt.verify(token, process.env.SESSION_SECRET);
-
                 user = await User.findById(decoded.id);
             } catch (err) {
                 console.error("JWT Verification Error:", err);
@@ -327,11 +417,45 @@ router.get('/product-details/:id', async (req, res) => {
         if (!product || !product.toggled) {
             return res.status(404).send('Product not found');
         }
-        res.render('product-details', { title: 'Product Details', product,user });
+
+        const category = product.category;
+
+        const relatedProducts = await Product.find({
+            _id: { $ne: product._id },
+            category: category,
+            toggled: true
+        }).limit(8);
+
+        res.render('product-details', { 
+            title: 'Product Details', 
+            product, 
+            user, 
+            category, 
+            relatedProducts 
+        });
     } catch (error) {
-        const productId = req.params.id;
-        const product = await Product.findById(productId);
-        res.render('product-details', { title: 'Product Details', product,user:null });
+        try {
+            const productId = req.params.id;
+            const product = await Product.findById(productId);
+            let category = product ? product.category : null;
+            let relatedProducts = [];
+            if (product && category) {
+                relatedProducts = await Product.find({
+                    _id: { $ne: product._id },
+                    category: category,
+                    toggled: true
+                }).limit(8);
+            }
+            res.render('product-details', { 
+                title: 'Product Details', 
+                product, 
+                user: null, 
+                category, 
+                relatedProducts 
+            });
+        } catch (err) {
+            res.status(500).send('Error loading product details');
+        }
     }
 });
 

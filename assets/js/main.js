@@ -1861,25 +1861,46 @@
         /* --------------------------------------------------------
             33. Quantity plus minus
         -------------------------------------------------------- */
-        $(".cart-plus-minus").prepend('<div class="dec qtybutton">-</div>');
-        $(".cart-plus-minus").append('<div class="inc qtybutton">+</div>');
-        $(".qtybutton").on("click", function() {
-            var $button = $(this);
-            var oldValue = $button.parent().find("input").val();
-            if ($button.text() == "+") {
-                var newVal = parseFloat(oldValue) + 1;
-            } 
-            else {
-                if (oldValue > 0) {
-                    var newVal = parseFloat(oldValue) - 1;
-                } 
-                else {
-                    newVal = 0;
-                }
-            }
-            $button.parent().find("input").val(newVal);
-        });
-
+  
+// Initialize plus/minus buttons
+function initQuantityButtons() {
+    $(".cart-plus-minus").each(function() {
+      // Only add buttons if they don't already exist
+      if ($(this).find('.qtybutton').length === 0) {
+        $(this).prepend('<div class="dec qtybutton">-</div>');
+        $(this).append('<div class="inc qtybutton">+</div>');
+      }
+    });
+  
+    // Handle plus/minus button clicks
+    $(document).on('click', '.qtybutton', function() {
+      var $button = $(this);
+      var $input = $button.parent().find("input");
+      var oldValue = parseFloat($input.val()) || 0;
+      var min = parseFloat($input.attr('min')) || 1;
+      var newVal;
+  
+      if ($button.hasClass("inc")) {
+        newVal = oldValue + 1;
+      } else {
+        newVal = oldValue > min ? oldValue - 1 : min;
+      }
+  
+      // Update input value
+      $input.val(newVal);
+      
+      // Manually trigger change event
+      $input.trigger('change');
+      
+      // Focus the input for better UX
+      $input.focus();
+    });
+  }
+  
+  // Initialize when DOM is ready
+  $(document).ready(function() {
+    initQuantityButtons();
+  });
 
 	    /* --------------------------------------------------------
             34. scrollUp active

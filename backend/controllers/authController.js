@@ -41,7 +41,6 @@ exports.userLogin = async (req, res) => {
 
         if (user.blocked) return res.status(403).json({ message: 'User is blocked!' });
 
-        // Fetch the user's cart from the database
         let userCart = await Cart.findOne({ userId: user._id });
 
         if (parsedGuestCart.length > 0) {
@@ -49,29 +48,31 @@ exports.userLogin = async (req, res) => {
                 userCart = new Cart({ userId: user._id, items: [] });
             }
 
-            // Fetch valid product IDs from DB
             const guestProductIds = parsedGuestCart.map(item => item.productId);
             const existingProducts = await Product.find({ _id: { $in: guestProductIds } });
 
             const existingProductIds = new Set(existingProducts.map(p => p._id.toString()));
 
-            // Remove deleted products
             parsedGuestCart = parsedGuestCart.filter(item => existingProductIds.has(item.productId));
 
-            // Merge guest cart into user's cart
             parsedGuestCart.forEach(guestItem => {
                 const existingItemIndex = userCart.items.findIndex(
                     item => item.productId.toString() === guestItem.productId
                 );
-
+            
                 if (existingItemIndex > -1) {
                     userCart.items[existingItemIndex].quantity += guestItem.quantity;
                 } else {
                     userCart.items.push({
                         productId: guestItem.productId,
                         title: guestItem.title,
+                        image: guestItem.image,
+                        price: guestItem.price,
+                        offerPrice: guestItem.offerPrice,
                         selectedMeasurement: guestItem.selectedMeasurement,
+                        selectedColor: guestItem.selectedColor,
                         quantity: guestItem.quantity,
+                        priceSource: guestItem.priceSource || 'base'
                     });
                 }
             });
@@ -95,7 +96,7 @@ exports.userLogin = async (req, res) => {
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
-    if (email === 'admin@maxtron.com' && password === 'admin@admin') {
+    if (email === 'admin@vitis.com' && password === 'admin@admin') {
         req.session.user = { email };
         res.redirect('/dashboard');
     } else {
@@ -248,7 +249,6 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-
 
 // Make a user admin
 exports.makeAdmin = async (req, res) => {

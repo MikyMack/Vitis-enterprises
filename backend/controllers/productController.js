@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
 const Notification = require('../models/Notification');
@@ -5,98 +6,154 @@ const fs = require('fs');
 const path = require('path');
 
 
-exports.createProduct = async (req, res) => {
-    try {
-
-        const { title, category, productDescription } = req.body;
-        
-        // Validate required fields
-        if (!title || !category || !productDescription) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        // Validate images
-        if (!req.files || req.files.length < 1) {
-            return res.status(400).json({ error: 'At least one image is required' });
-        }
-
-        const uploadsFolder = path.join(__dirname, '../../uploads');
-        const imagePaths = req.files.map(file => `uploads/${path.basename(file.path)}`);
-
-        // Ensure images exist in the uploads folder
-        const allImagesValid = imagePaths.every(imagePath => fs.existsSync(path.join(uploadsFolder, path.basename(imagePath))));
-        if (!allImagesValid) {
-            return res.status(400).json({ message: 'Some images were not uploaded correctly' });
-        }
-
-        // Parse customerReviews safely
-        let parsedCustomerReviews = [];
-        if (req.body['customerReviews[0].title']) {
-            try {
-                parsedCustomerReviews = Object.keys(req.body)
-                    .filter(key => key.startsWith('customerReviews'))
-                    .reduce((acc, key) => {
-                        const match = key.match(/customerReviews\[(\d+)\]\.(\w+)/);
-                        if (match) {
-                            const index = match[1];
-                            const field = match[2];
-                            acc[index] = acc[index] || {};
-                            acc[index][field] = req.body[key];
-                        }
-                        return acc;
-                    }, []);
-            } catch (error) {
-                return res.status(400).json({ error: 'Invalid customerReviews format' });
-            }
-        }
-
-        // Parse measurements safely
-        let parsedMeasurements = [];
-        if (req.body['measurements[0].length']) {
-            try {
-                parsedMeasurements = Object.keys(req.body)
-                    .filter(key => key.startsWith('measurements'))
-                    .reduce((acc, key) => {
-                        const match = key.match(/measurements\[(\d+)\]\.(\w+)/);
-                        if (match) {
-                            const index = match[1];
-                            const field = match[2];
-                            acc[index] = acc[index] || {};
-                            acc[index][field] = Number(req.body[key]);
-                        }
-                        return acc;
-                    }, []);
-            } catch (error) {
-                return res.status(400).json({ error: 'Invalid measurements format' });
-            }
-        }
-
-        const newProduct = new Product({
-            title,
-            category,
-            productDescription,
-            customerReviews: parsedCustomerReviews,
-            images: imagePaths,
-            measurements: parsedMeasurements,
-        });
-
-        const savedProduct = await newProduct.save();
-
-        // Create notification
-        await Notification.create({
-            title: 'New Product Added',
-            message: `Product "${savedProduct.title}" was successfully added.`,
-        });
-
-        // Redirect to product list page
-        res.redirect('/admin-products-list');
-    } catch (error) {
-        console.error('Error creating product:', error);
-        res.status(500).json({ message: 'Error creating product', error: error.message });
-    }
+const parseNestedArray = (req, prefix) => {
+  const result = [];
+  let index = 0;
+  
+  while (true) {
+    const keys = Object.keys(req.body).filter(key => 
+      key.startsWith(`${prefix}[${index}]`)
+    );
+    
+    if (keys.length === 0) break;
+    
+    const item = {};
+    keys.forEach(key => {
+      const match = key.match(new RegExp(`${prefix}\\[${index}\\]\\.(\\w+)`));
+      if (match) {
+        const field = match[1];
+        item[field] = req.body[key];
+      }
+    });
+    
+    result.push(item);
+    index++;
+  }
+  
+  return result;
 };
 
-// Edit a Review inside a Product
+// Create a new product
+exports.createProduct = async (req, res) => {
+  try {
+    const { title, category, basePrice, baseOfferPrice, baseStocks } = req.body;
+
+    if (!title || !category) {
+      return res.status(400).json({ error: 'Title and category are required' });
+    }
+
+    if (!req.files || req.files.length < 1 || req.files.length > 4) {
+      return res.status(400).json({ error: 'Between 1 and 4 images are required' });
+    }
+
+    const imagePaths = req.files.map(file => `uploads/${file.filename}`);
+
+    const productDescription = parseNestedArray(req, 'productDescription');
+
+    const colorVariantsRaw = parseNestedArray(req, 'colorVariants');
+    const colorVariants = colorVariantsRaw
+      .filter(variant => variant.colorName && variant.colorName.trim() !== '')
+      .map(variant => ({
+        colorName: variant.colorName,
+        colorCode: variant.colorCode || '',
+        price: variant.price ? Number(variant.price) : 0,
+        offerPrice: variant.offerPrice ? Number(variant.offerPrice) : undefined,
+        stocks: variant.stocks ? Number(variant.stocks) : 0
+      }));
+
+    const measurementsRaw = parseNestedArray(req, 'measurements');
+    const measurements = measurementsRaw
+      .filter(measure => measure.measurement && measure.measurement.trim() !== '')
+      .map(measure => ({
+        measurement: measure.measurement,
+        price: measure.price ? Number(measure.price) : 0,
+        offerPrice: measure.offerPrice ? Number(measure.offerPrice) : undefined,
+        stocks: measure.stocks ? Number(measure.stocks) : 0
+      }));
+
+    const customerReviews = parseNestedArray(req, 'customerReviews');
+
+    const newProduct = new Product({
+      title,
+      category,
+      productDescription,
+      images: imagePaths,
+      basePrice: basePrice ? Number(basePrice) : undefined,
+      baseOfferPrice: baseOfferPrice ? Number(baseOfferPrice) : undefined,
+      baseStocks: baseStocks ? Number(baseStocks) : undefined,
+      colorVariants: colorVariants.length > 0 ? colorVariants : undefined,
+      measurements: measurements.length > 0 ? measurements : undefined,
+      customerReviews,
+      toggled: true
+    });
+
+    const savedProduct = await newProduct.save();
+
+    // Create notification
+    await Notification.create({
+      title: 'New Product Added',
+      message: `Product "${savedProduct.title}" was successfully added.`,
+    });
+
+    res.redirect('/admin-products-list');
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating product',
+      error: error.message
+    });
+  }
+};
+
+// Get all products
+exports.listProducts = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = req.query;
+    const skip = (page - 1) * limit;
+
+    const searchFilter = search ? {
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+      ]
+    } : {};
+
+    const products = await Product.find(searchFilter)
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    const totalProducts = await Product.countDocuments(searchFilter);
+
+    res.json({
+      success: true,
+      products,
+      totalProducts,
+      currentPage: Number(page),
+      totalPages: Math.ceil(totalProducts / limit),
+      searchQuery: search,
+      limit: Number(limit)
+    });
+
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching products' 
+    });
+  }
+};
+
+exports.getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find({}, '_id'); // Fetch only product IDs
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 exports.editReview = async (req, res) => {
     try {
         const { productId, reviewIndex } = req.params;
@@ -136,355 +193,482 @@ exports.editReview = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+// Get single product
+exports.getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
+    }
 
-// Edit a Product
+    res.json({ 
+      success: true, 
+      product 
+    });
+
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching product' 
+    });
+  }
+};
+
 exports.editProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, category, productDescription } = req.body;
+  try {
+    const { id } = req.params;
+    const { title, category, basePrice, baseOfferPrice, baseStocks } = req.body;
 
-        // Ensure the product exists before making updates
-        const product = await Product.findById(id);
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
-        }
-
-        // Validate required fields
-        if (!title || !category || !productDescription) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        // Handle image uploads, retaining old images if none are provided
-        let imagePaths = product.images;
-        if (req.files && req.files.length > 0) {
-            imagePaths = req.files.map(file => `uploads/${path.basename(file.path)}`);
-        }
-
-        const uploadsFolder = path.join(__dirname, '../../uploads');
-        const allImagesValid = imagePaths.every(imagePath => fs.existsSync(path.join(uploadsFolder, path.basename(imagePath))));
-        if (!allImagesValid) {
-            return res.status(400).json({ message: 'Some images were not uploaded correctly' });
-        }
-
-        // Parse customerReviews safely
-        let parsedCustomerReviews = [];
-        if (req.body['customerReviews[0].title']) {
-            try {
-                parsedCustomerReviews = Object.keys(req.body)
-                    .filter(key => key.startsWith('customerReviews'))
-                    .reduce((acc, key) => {
-                        const match = key.match(/customerReviews\[(\d+)\]\.(\w+)/);
-                        if (match) {
-                            const index = match[1];
-                            const field = match[2];
-                            acc[index] = acc[index] || {};
-                            acc[index][field] = req.body[key];
-                        }
-                        return acc;
-                    }, []);
-            } catch (error) {
-                return res.status(400).json({ error: 'Invalid customerReviews format' });
-            }
-        }
-
-        // Parse measurements safely
-        let parsedMeasurements = [];
-        if (req.body['measurements[0].length']) {
-            try {
-                parsedMeasurements = Object.keys(req.body)
-                    .filter(key => key.startsWith('measurements'))
-                    .reduce((acc, key) => {
-                        const match = key.match(/measurements\[(\d+)\]\.(\w+)/);
-                        if (match) {
-                            const index = match[1];
-                            const field = match[2];
-                            acc[index] = acc[index] || {};
-                            acc[index][field] = Number(req.body[key]);
-                        }
-                        return acc;
-                    }, []);
-            } catch (error) {
-                return res.status(400).json({ error: 'Invalid measurements format' });
-            }
-        }
-
-        // Prepare the update object
-        const updates = {
-            title,
-            category,
-            productDescription,
-            customerReviews: parsedCustomerReviews,
-            images: imagePaths,
-            measurements: parsedMeasurements,
-        };
-
-        // Update the product in the database
-        const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
-        if (!updatedProduct) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
-        }
-
-        // Redirect to product list page if successful
-        res.redirect('/admin-products-list');
-    } catch (error) {
-        console.error('Error updating product:', error);
-        res.status(500).json({ success: false, error: error.message });
+    // Validate required fields
+    if (!title || !category) {
+      return res.status(400).json({ error: 'Title and category are required' });
     }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
+    }
+
+    // Handle image updates
+    let imagePaths = product.images;
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 4) {
+        return res.status(400).json({ error: 'Maximum 4 images allowed' });
+      }
+
+      // Delete old images
+      product.images.forEach(image => {
+        if (image.startsWith('uploads/')) {
+          const imagePath = path.join(process.cwd(), image);
+          if (fs.existsSync(imagePath)) {
+            try {
+              fs.unlinkSync(imagePath);
+            } catch (err) {
+              console.error(`Failed to delete image: ${imagePath}`, err);
+            }
+          }
+        }
+      });
+
+      imagePaths = req.files.map(file => `uploads/${file.filename}`);
+    }
+
+    // Parse nested arrays
+    const productDescription = parseNestedArray(req, 'productDescription');
+    const colorVariants = parseNestedArray(req, 'colorVariants').map(variant => ({
+      colorName: variant.colorName,
+      colorCode: variant.colorCode || '',
+      price: Number(variant.price) || 0,
+      offerPrice: variant.offerPrice ? Number(variant.offerPrice) : undefined,
+      stocks: Number(variant.stocks) || 0
+    }));
+
+    const measurements = parseNestedArray(req, 'measurements').map(measure => ({
+      measurement: measure.measurement,
+      price: Number(measure.price) || 0,
+      offerPrice: measure.offerPrice ? Number(measure.offerPrice) : undefined,
+      stocks: Number(measure.stocks) || 0
+    }));
+
+    const customerReviews = parseNestedArray(req, 'customerReviews');
+
+    // Update product
+    const updatedProduct = await Product.findByIdAndUpdate(id, {
+      title,
+      category,
+      productDescription,
+      images: imagePaths,
+      basePrice: basePrice ? Number(basePrice) : undefined,
+      baseOfferPrice: baseOfferPrice ? Number(baseOfferPrice) : undefined,
+      baseStocks: baseStocks ? Number(baseStocks) : undefined,
+      colorVariants,
+      measurements,
+      customerReviews
+    }, { new: true });
+
+    res.redirect('/admin-products-list');
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error updating product',
+      error: error.message 
+    });
+  }
 };
 
-
-
-// Delete a Product
+// Delete product
 exports.deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const product = await Product.findById(id);
-
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
-        }
-
-        // Delete images from the uploads folder
-        if (product.images && product.images.length > 0) {
-            product.images.forEach(imagePath => {
-                const fullPath = path.join(process.cwd(), imagePath);
-                if (fs.existsSync(fullPath)) {
-                    fs.unlink(fullPath, (err) => {
-                        if (err) {
-                            console.error('Error deleting image:', err);
-                        }
-                    });
-                }
-            });
-        }
-
-        await Product.findByIdAndDelete(id);
-
-        // Create a notification for product deletion
-        await Notification.create({
-            title: 'Product Deleted',
-            message: `Product "${product.title}" was successfully deleted.`,
-        });
-
-        return res.status(200).json({ success: true, message: 'Product deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({ success: false, message: 'Error deleting product' });
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
     }
+    product.images.forEach(image => {
+
+      const imagePath = path.resolve(process.cwd(), image);
+      if (fs.existsSync(imagePath)) {
+        try {
+          fs.unlinkSync(imagePath);
+        } catch (err) {
+          console.error(`Failed to delete image: ${imagePath}`, err);
+        }
+      }
+    });
+
+    await Product.findByIdAndDelete(req.params.id);
+
+    // Create notification
+    await Notification.create({
+      title: 'Product Deleted',
+      message: `Product "${product.title}" was deleted.`,
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Product deleted successfully' 
+    });
+
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error deleting product' 
+    });
+  }
 };
 
-
-
-// Toggle a Product (Enable/Disable)
+// Toggle product status
 exports.toggleProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const product = await Product.findById(id);
-        product.toggled = !product.toggled;
-        await product.save();
-
-        res.status(200).json({ message: 'Product toggled successfully', toggled: product.toggled });
-    } catch (error) {
-        console.error('Error toggling product:', error);
-        res.status(500).json({ message: 'Error toggling product' });
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
     }
+
+    product.toggled = !product.toggled;
+    await product.save();
+
+    res.json({ 
+      success: true, 
+      toggled: product.toggled,
+      message: `Product ${product.toggled ? 'enabled' : 'disabled'} successfully`
+    });
+
+  } catch (error) {
+    console.error('Error toggling product:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error toggling product' 
+    });
+  }
 };
 
-
-// List all Products
-exports.listProducts = async (req, res) => {
-    try {
-        const { page = 1, limit = 10, search = '' } = req.query; 
-        const skip = (page - 1) * limit;
-
-        const searchFilter = search
-            ? {
-                  $or: [
-                      { title: { $regex: search, $options: 'i' } },
-                      { category: { $regex: search, $options: 'i' } }, 
-                  ],
-              }
-            : {};
-
-        const products = await Product.find(searchFilter)
-            .skip(skip)
-            .limit(Number(limit));
-
-        const totalProducts = await Product.countDocuments(searchFilter);
-
-        res.render('admin-products-list', {
-            products,
-            totalProducts,
-            currentPage: Number(page),
-            totalPages: Math.ceil(totalProducts / limit), // Calculate total pages
-            searchQuery: search, // Pass search query to the view
-            limit: Number(limit), // Pass limit to the view
-        });
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        res.status(500).json({ message: 'Error fetching products' });
-    }
-};
-exports.getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.find({}, '_id'); // Fetch only product IDs
-        res.json({ success: true, products });
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-};
-
-
+// Add to cart
 exports.addToCart = async (req, res) => {
-    try {
-        const { productId, length, width, quantity } = req.body;
+  try {
+    const { productId, colorIndex, measurementIndex, quantity } = req.body;
+    const quantityNum = Number(quantity) || 1;
 
-        const product = await Product.findById(productId);
-        if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
 
-        // Find the selected measurement
-        const selectedMeasurement = product.measurements.find(
-            (m) => m.length === length && m.width === width
-        );
+    // Determine selected variants and pricing
+    let price, offerPrice;
+    let selectedColor = null;
+    let selectedMeasurement = null;
 
-        if (!selectedMeasurement) {
-            return res.status(400).json({ message: "Invalid measurement selected" });
-        }
+    // Check for color variant
+    if (colorIndex !== undefined && product.colorVariants?.length > 0) {
+      const colorIdx = parseInt(colorIndex);
+      if (colorIdx >= 0 && colorIdx < product.colorVariants.length) {
+        selectedColor = product.colorVariants[colorIdx];
+        price = selectedColor.price;
+        offerPrice = selectedColor.offerPrice;
+      }
+    }
 
-        // **Case 1: Logged-in User (Store in Database)**
-        if (req.user) {
-            let userCart = await Cart.findOne({ userId: req.user.id });
+    // Check for measurement (overrides color pricing if both exist)
+    if (measurementIndex !== undefined && product.measurements?.length > 0) {
+      const measurementIdx = parseInt(measurementIndex);
+      if (measurementIdx >= 0 && measurementIdx < product.measurements.length) {
+        selectedMeasurement = product.measurements[measurementIdx];
+        price = selectedMeasurement.price;
+        offerPrice = selectedMeasurement.offerPrice;
+      }
+    }
 
-            if (!userCart) {
-                userCart = new Cart({ userId: req.user.id, items: [] });
-            }
+    // Fall back to base prices if no variants selected
+    price = price ?? product.basePrice;
+    offerPrice = offerPrice ?? product.baseOfferPrice;
 
-            let existingItem = userCart.items.find(
-                (item) => item.productId.toString() === productId &&
-                          item.selectedMeasurement.length === length &&
-                          item.selectedMeasurement.width === width
-            );
+    if (price === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'No valid price configuration found for this product'
+      });
+    }
 
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } else {
-                userCart.items.push({
-                    productId,
-                    title: product.title,
-                    selectedMeasurement: {
-                        length: selectedMeasurement.length,
-                        width: selectedMeasurement.width,
-                        price: selectedMeasurement.price,
-                        offerPrice: selectedMeasurement.offerPrice || 0,
-                    },
-                    quantity
-                });
-            }
+    // For logged-in users
+    if (req.user) {
+      let cart = await Cart.findOne({ userId: req.user.id }) || 
+                 new Cart({ userId: req.user.id, items: [] });
 
-            await userCart.save();
-            return res.json({ message: "Cart updated successfully", isGuest: false });
-        }
+      // Create comparison objects for variants
+      const colorCompare = selectedColor ? { 
+        colorName: selectedColor.colorName 
+      } : null;
 
-        // **Case 2: Guest User (Handle on Frontend)**
-        return res.json({
-            message: "Guest user, handle cart in localStorage",
-            isGuest: true,
-            cartItem: {
-                productId,
-                title: product.title,
-                selectedMeasurement: {
-                    length: selectedMeasurement.length,
-                    width: selectedMeasurement.width,
-                    price: selectedMeasurement.price,
-                    offerPrice: selectedMeasurement.offerPrice || 0,
-                },
-                quantity
-            }
+      const measurementCompare = selectedMeasurement ? { 
+        measurement: selectedMeasurement.measurement 
+      } : null;
+
+      // Find existing item with same product and variants
+      const existingItemIndex = cart.items.findIndex(item => 
+        item.productId.toString() === productId &&
+        JSON.stringify(item.selectedColor) === JSON.stringify(colorCompare) &&
+        JSON.stringify(item.selectedMeasurement) === JSON.stringify(measurementCompare)
+      );
+
+      if (existingItemIndex >= 0) {
+        // Item exists - update quantity
+        cart.items[existingItemIndex].quantity += quantityNum;
+      } else {
+        // New item - add to cart
+        cart.items.push({
+          productId,
+          title: product.title,
+          image: product.images[0],
+          price,
+          offerPrice,
+          selectedColor: colorCompare,
+          selectedMeasurement: measurementCompare,
+          quantity: quantityNum
         });
+      }
 
-    } catch (error) {
-        console.error('Error adding to cart:', error);
-        res.status(500).json({ message: 'Error adding to cart' });
+      await cart.save();
+      return res.json({
+        success: true,
+        message: 'Product added to cart',
+        cart: cart.items
+      });
     }
+
+    // For guest users
+    return res.json({
+      success: true,
+      isGuest: true,
+      cartItem: {
+        productId,
+        title: product.title,
+        image: product.images[0],
+        price,
+        offerPrice,
+        selectedColor: selectedColor ? { 
+          colorName: selectedColor.colorName 
+        } : undefined,
+        selectedMeasurement: selectedMeasurement ? { 
+          measurement: selectedMeasurement.measurement 
+        } : undefined,
+        quantity: quantityNum
+      }
+    });
+
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error adding to cart',
+      error: error.message
+    });
+  }
 };
-
-
+// Get cart
 exports.displayCart = async (req, res) => {
-    try {
-        let cartItems = [];
-        let isGuest = true;
+  try {
+    let cartItems = [];
+    let isGuest = true;
+    let total = 0;
 
-        if (req.user) {
-            // Logged-in User - Fetch cart from the database
-            const userCart = await Cart.findOne({ userId: req.user.id }).populate("items.productId");
-            if (userCart) {
-                cartItems = userCart.items.map(item => ({
-                    productId: item.productId._id, // Extract the product ID
-                    title: item.productId.title, // Extract the product title
-                    selectedMeasurement: item.selectedMeasurement, // Keep the selectedMeasurement object
-                    quantity: item.quantity, // Keep the quantity
-                    image: item.productId.images[0], // Extract the image URL
-                }));
-            }
-            isGuest = false;
-        } else {
-            // Guest User - Fetch cart from cookies/localStorage (Handled on frontend)
-            cartItems = []; // Local Storage cart will be handled on frontend
-        }
-
-        // Render the cart page with the cart items and guest status
-        res.render("cart", { cartItems, isGuest });
-    } catch (error) {
-        console.error('Error displaying cart:', error);
-        res.status(500).json({ message: 'Error displaying cart' });
+    if (req.user) {
+      const userCart = await Cart.findOne({ userId: req.user.id }).populate("items.productId");
+      if (userCart) {
+        cartItems = userCart.items.map(item => ({
+          _id: item._id, 
+          productId: item.productId._id,
+          title: item.productId.title,
+          price: item.price || item.productId.price,
+          offerPrice: item.offerPrice || item.productId.offerPrice,
+          selectedMeasurement: item.selectedMeasurement,
+          selectedColor: item.selectedColor,
+          quantity: item.quantity,
+          image: item.image || item.productId.images[0],
+          subtotal: (item.offerPrice || item.price || item.productId.price) * item.quantity
+        }));
+        total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+      }
+      isGuest = false;
     }
+    
+    res.render("cart", { 
+      cartItems, 
+      isGuest,
+      subtotal: total,
+      shipping: 50, 
+      vat: 0, 
+      total: total + 50 
+    });
+  } catch (error) {
+    console.error('Error displaying cart:', error);
+    res.status(500).json({ message: 'Error displaying cart' });
+  }
 };
 
-exports.updateCart = async (req, res) => {
-    try {
-        const { productId, quantity } = req.body;
-
-        if (!req.user) {
-            return res.status(401).json({ success: false, message: "Login required" });
-        }
-
-        const cart = await Cart.findOne({ userId: req.user.id });
-        if (!cart) return res.status(404).json({ success: false, message: "Cart not found" });
-
-        const item = cart.items.find(item => item.productId.toString() === productId);
-        if (!item) return res.status(404).json({ success: false, message: "Item not found in cart" });
-
-        item.quantity = quantity;
-        await cart.save();
-
-        const newTotal = item.selectedMeasurement.price * item.quantity;
-        const cartTotal = cart.items.reduce((acc, item) => acc + item.selectedMeasurement.price * item.quantity, 0) + 100;
-
-        res.status(200).json({ success: true, newTotal, cartTotal });
-    } catch (error) {
-        console.error("Error updating cart:", error);
-        res.status(500).json({ success: false, message: "Error updating cart" });
+// Update cart item quantity
+exports.updateCartItem = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { quantity } = req.body;
+    
+    // Validate inputs
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid item ID format'
+      });
     }
+
+    const quantityNum = parseInt(quantity);
+    if (isNaN(quantityNum) || quantityNum < 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Quantity must be a positive number'
+      });
+    }
+
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    const cart = await Cart.findOne({ userId: req.user.id });
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cart not found'
+      });
+    }
+
+    // Find the item using Mongoose's equals() for ObjectId comparison
+    const itemIndex = cart.items.findIndex(item => 
+      item._id && item._id.equals(itemId)
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found in cart'
+      });
+    }
+
+    // Update quantity
+    cart.items[itemIndex].quantity = quantityNum;
+    await cart.save();
+
+    // Calculate updated subtotal
+    const updatedItem = cart.items[itemIndex];
+    const subtotal = (updatedItem.offerPrice || updatedItem.price) * updatedItem.quantity;
+
+    return res.json({
+      success: true,
+      updatedItem: {
+        ...updatedItem.toObject(),
+        subtotal: subtotal.toFixed(2)
+      }
+    });
+
+  } catch (error) {
+    console.error('Error updating cart item:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating cart item',
+      error: error.message
+    });
+  }
 };
 
+// Remove from cart
 exports.removeFromCart = async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ success: false, message: "Login required" });
-        }
+  try {
+    const { itemId } = req.params;
 
-        const cart = await Cart.findOne({ userId: req.user.id });
-        if (!cart) return res.status(404).json({ success: false, message: "Cart not found" });
-
-        cart.items = cart.items.filter(item => item.productId.toString() !== req.params.productId);
-        await cart.save();
-
-        const cartTotal = cart.items.reduce((acc, item) => acc + item.selectedMeasurement.price * item.quantity, 0) + 100;
-
-        res.status(200).json({ success: true, cartTotal });
-    } catch (error) {
-        console.error("Error removing from cart:", error);
-        res.status(500).json({ success: false, message: "Error removing from cart" });
+    // Validate itemId
+    if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid item ID'
+      });
     }
+
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    const cart = await Cart.findOne({ userId: req.user.id });
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cart not found'
+      });
+    }
+
+    // Correct filtering - keep items that DON'T match the ID
+    const initialCount = cart.items.length;
+    cart.items = cart.items.filter(item => item._id.toString() !== itemId);
+
+    if (cart.items.length === initialCount) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found in cart'
+      });
+    }
+
+    await cart.save();
+
+    return res.json({
+      success: true,
+      message: 'Item removed from cart'
+    });
+
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Error removing from cart'
+    });
+  }
 };

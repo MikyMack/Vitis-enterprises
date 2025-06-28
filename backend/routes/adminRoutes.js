@@ -5,7 +5,6 @@ const authController =require('../controllers/authController')
 const productController =require('../controllers/productController')
 const Category = require('../models/Category');
 const Product = require('../models/Product');
-const Banner = require('../models/Banner');
 const Testimonial = require('../models/Testimonial');
 const Blogs = require('../models/Blog');
 const Users = require('../models/User');
@@ -127,22 +126,9 @@ app.put('/orders/update/:id', authMiddleware, async (req, res) => {
         res.status(500).json({ success: false, message: 'Error updating order' });
     }
 });
-app.get('/admin-edit-banner/:id', authMiddleware, async (req, res) => {
-    try {
-        const bannerId = req.params.id; 
-        const banner = await Banner.findById(bannerId); 
-        if (!banner) {
-            return res.status(404).send('Banner not found');
-        }
-        res.render('admin-edit-banner', { title: 'Edit Banner', banner }); 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Error retrieving banner' });
-    }
-});
-app.get('/admin-add-banner', authMiddleware, (req, res) => {
-    res.render('admin-add-banner', { title: 'Manage Banners' });
-});
+app.get('/admin-banners',authMiddleware, (req, res) => {
+    res.render('admin-banner');
+  });
 
 
 // manage proucts 
@@ -153,7 +139,49 @@ app.get('/admin-add-product', authMiddleware, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-app.get('/admin-products-list', authMiddleware, productController.listProducts);
+app.get('/admin-products-list', authMiddleware, async (req, res) => {
+    try {
+        // Get page, limit, and search from query, default to 1, 10, and empty string
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const searchQuery = req.query.search || '';
+
+        // Build search filter if searchQuery is present
+        const searchFilter = searchQuery
+            ? {
+                $or: [
+                    { title: { $regex: searchQuery, $options: 'i' } },
+                    { category: { $regex: searchQuery, $options: 'i' } },
+                ]
+            }
+            : {};
+
+        // Get total count for pagination (with search filter)
+        const totalProducts = await Product.countDocuments(searchFilter);
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Fetch products with pagination and search
+        const products = await Product.find(searchFilter)
+            .skip(skip)
+            .limit(limit)
+            .populate('category');
+
+        res.render('admin-products-list', { 
+            title: 'Manage products',
+            products,
+            page,
+            limit,
+            totalPages,
+            totalProducts,
+            searchQuery
+        }); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 app.get('/admin-edit-products/:id', authMiddleware, async (req, res) => {
     try {
         const productId = req.params.id; 

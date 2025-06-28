@@ -104,39 +104,10 @@
                                                     <div class="text">Order list</div>
                                                 </a>
                                             </li>
-                                            <!-- <li class="sub-menu-item">
-                                                <a href="/admin-new-category" class="">
-                                                    <div class="text">New category</div>
-                                                </a>
-                                            </li> -->
+                                          
                                         </ul>
                                     </li>
-                                    <!-- <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <svg width="24" height="22" viewBox="0 0 22 18" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M0.5 1.875C0.5 0.839466 1.33947 0 2.375 0H19.625C20.6605 0 21.5 0.839466 21.5 1.875V3.375C21.5 4.29657 20.8351 5.06285 19.9589 5.22035L19.3733 15.1762C19.28 16.7619 17.9669 18 16.3785 18H5.62154C4.03311 18 2.71999 16.7619 2.62671 15.1762L2.04108 5.22035C1.16485 5.06285 0.5 4.29657 0.5 3.375V1.875ZM2.75659 3.75C2.75266 3.74997 2.74873 3.74997 2.74479 3.75H2.375C2.16789 3.75 2 3.58211 2 3.375V1.875C2 1.66789 2.16789 1.5 2.375 1.5H19.625C19.8321 1.5 20 1.66789 20 1.875V3.375C20 3.58211 19.8321 3.75 19.625 3.75H19.2552C19.2513 3.74997 19.2473 3.74997 19.2434 3.75H2.75659ZM3.54541 5.25L4.12412 15.0881C4.17076 15.8809 4.82732 16.5 5.62154 16.5H16.3785C17.1727 16.5 17.8292 15.8809 17.8759 15.0881L18.4546 5.25H3.54541ZM8.24976 8.25C8.24976 7.83579 8.58554 7.5 8.99976 7.5H12.9998C13.414 7.5 13.7498 7.83579 13.7498 8.25C13.7498 8.66421 13.414 9 12.9998 9H8.99976C8.58554 9 8.24976 8.66421 8.24976 8.25Z"
-                                                        fill="#111111" />
-                                                </svg>
-                                            </div>
-                                            <div class="text">Banner Management</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item">
-                                                <a href="/admin-banner" class="">
-                                                    <div class="text">Banners</div>
-                                                </a>
-                                            </li>
-                                            <li class="sub-menu-item">
-                                                <a href="/admin-add-banner" class="">
-                                                    <div class="text">Add Banners</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li> -->
-                                 
+                                  
                                     <li class="menu-item has-children">
                                         <a href="javascript:void(0);" class="menu-item-button">
                                             <div class="icon"><i class="fa fa-users"></i></div>
@@ -237,7 +208,7 @@
                                                     <img src="admin-images/avatar/user-1.png" alt="">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-text text-main-dark">Maxtron</span>
+                                                    <span class="body-text text-main-dark">Vitis</span>
                                                     <span class="text-tiny">Admin</span>
                                                 </span>
                                             </span>
@@ -352,12 +323,16 @@
     categoryItem.setAttribute('data-category-id', category._id); // Add this line
     categoryItem.innerHTML = `
         <div class="name">
+            ${category.images && category.images[0] ? `
             <div class="image">
                 <img src="/${category.images[0]}" alt="Category Image 1">
             </div>
+            ` : ''}
+            ${category.images && category.images[1] ? `
             <div class="image">
                 <img src="/${category.images[1]}" alt="Category Image 2">
             </div>
+            ` : ''}
             <div class="title line-clamp-2 mb-0">
                 <a href="#" class="body-text">${category.title}</a>
             </div>

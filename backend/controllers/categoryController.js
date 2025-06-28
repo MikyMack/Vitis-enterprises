@@ -7,16 +7,13 @@ const path = require('path');
 exports.createCategory = async (req, res) => {
     const { title, description, toggled, subCategory = [] } = req.body;
 
-    if (!req.files || req.files.length !== 2) {
-        return res.status(400).json({ error: 'You must upload exactly 2 images.' });
-    }
-
-    const imagePaths = req.files.map(file => `uploads/${path.basename(file.path)}`);
-    const uploadsFolder = path.join(__dirname, '../../uploads');
-    const allImagesValid = imagePaths.every(imagePath => fs.existsSync(imagePath));
-
-    if (!allImagesValid) {
-        return res.status(400).json({ error: 'Some images were not uploaded correctly' });
+    let imagePaths = [];
+    if (req.files && req.files.length > 0) {
+        imagePaths = req.files.map(file => `uploads/${path.basename(file.path)}`);
+        const allImagesValid = imagePaths.every(imagePath => fs.existsSync(imagePath));
+        if (!allImagesValid) {
+            return res.status(400).json({ error: 'Some images were not uploaded correctly' });
+        }
     }
 
     try {
@@ -29,7 +26,6 @@ exports.createCategory = async (req, res) => {
         });
         const category = await newCategory.save();
 
-        // Create a notification for the new category
         await Notification.create({
             title: 'New Category Added',
             message: `Category "${category.title}" was successfully created.`,
@@ -41,14 +37,12 @@ exports.createCategory = async (req, res) => {
     }
 };
 
-// Get all Categories
 exports.getAllCategories = (req, res) => {
     Category.find()
         .then(categories => res.json(categories))
         .catch(err => res.status(500).json({ error: err.message }));
 };
 
-// Get a single Category by ID
 exports.getCategoryById = (req, res) => {
     const { id } = req.params;
 
@@ -67,19 +61,16 @@ exports.editCategory = async (req, res) => {
     const { id } = req.params;
     const { title, description, toggled, subCategory } = req.body;
 
-    // Fetch the existing category to retain its images
     const existingCategory = await Category.findById(id);
     if (!existingCategory) {
         return res.status(404).json({ error: 'Category not found' });
     }
 
-    // Initialize images with existing images
-    let images = existingCategory.images || [];
-
-    // If new images are uploaded, append them to the existing images
+    let images;
     if (req.files && req.files.length > 0) {
-        const newImagePaths = req.files.map(file => `uploads/${path.basename(file.path)}`);
-        images = [...images, ...newImagePaths];
+        images = req.files.map(file => `uploads/${path.basename(file.path)}`);
+    } else {
+        images = existingCategory.images || [];
     }
 
     try {

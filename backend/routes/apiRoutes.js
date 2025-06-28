@@ -4,11 +4,13 @@ const upload = require('../middleware/upload');
 const User =require('../models/User')
 const categoryController = require('../controllers/categoryController'); 
 const authController = require('../controllers/authController'); 
-const bannerController = require('../controllers/bannerController');
 const productController = require('../controllers/productController');
 const blogsController = require('../controllers/blogsController');
 const testimonialController = require('../controllers/testimonialController');
 const notificationController = require('../controllers/notificationCOntroller');
+const mainBannerCtrl = require('../controllers/mainBannerController');
+const bannerTwoCtrl = require('../controllers/bannerTwoController');
+const bannerThreeCtrl = require('../controllers/bannerThreeController');
 const Notification=require('../models/Notification')
 const nodemailer = require('nodemailer');
 const authenticateUser = require('../middleware/auth');
@@ -25,11 +27,31 @@ const transporter = nodemailer.createTransport({
 });
 
 
+router.get('/main', mainBannerCtrl.getAll);
+router.post('/main', upload.single('image'), mainBannerCtrl.create);
+router.put('/main/:id', upload.single('image'), mainBannerCtrl.update);
+router.delete('/main/:id', mainBannerCtrl.delete);
+router.patch('/main/:id/toggle', mainBannerCtrl.toggleStatus);
+
+// Banner Two Routes
+router.get('/two', bannerTwoCtrl.getAll);
+router.post('/two', upload.single('image'), bannerTwoCtrl.create);
+router.put('/two/:id', upload.single('image'), bannerTwoCtrl.update);
+router.delete('/two/:id', bannerTwoCtrl.delete);
+router.patch('/two/:id/toggle', bannerTwoCtrl.toggleStatus);
+
+// Banner Three Routes
+router.get('/three', bannerThreeCtrl.getAll);
+router.post('/three', upload.single('image'), bannerThreeCtrl.create);
+router.put('/three/:id', upload.single('image'), bannerThreeCtrl.update);
+router.delete('/three/:id', bannerThreeCtrl.delete);
+router.patch('/three/:id/toggle', bannerThreeCtrl.toggleStatus);
+
 // Product Routes
 router.post('/products/create', upload.array('productsImages', 4), productController.createProduct);         // Create a Product
 router.put('/products/edit/:id', upload.array('productsImages', 4), productController.editProduct);          // Edit a Product
-router.delete('/products/delete/:id', productController.deleteProduct);   // Delete a Product
-router.put('/products/toggle/:id', productController.toggleProduct);      // Toggle a Product (Enable/Disable)
+router.delete('/products/delete/:id', productController.deleteProduct);   
+router.put('/products/toggle/:id', productController.toggleProduct);     
 router.get('/products', productController.listProducts);    
 router.get('/products/all', productController.getAllProducts);    
 router.put('/products/edit-review/:productId/:reviewIndex', productController.editReview);              // List all Products
@@ -57,15 +79,6 @@ router.put('/blogs/edit/:id', upload.single('profilePic'), blogsController.editB
 router.delete('/blogs/delete/:id', blogsController.deleteBlog);                     // Delete Testimonial
 
 
-
-// banner routes 
-router.post('/banners/create',upload.single('bannerimage'), bannerController.createBanner);
-router.get('/banners', bannerController.getAllBanners);
-router.get('/banners/:id', bannerController.getBannerById);
-router.put('/banners/edit/:id',upload.single('bannerimage'), bannerController.editBanner);
-router.put('/banners/toggle/:id', bannerController.toggleBanner);
-router.delete('/banners/delete/:id', bannerController.deleteBanner);
-
 router.get('/notifications', async (req, res) => {
     try {
         const notifications = await Notification.find().sort({ createdAt: -1 }).limit(10);
@@ -83,7 +96,7 @@ router.post('/send-contact', async (req, res) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
-        subject: 'Rettic Enquiry Form',
+        subject: 'Vitis Enquiry Form',
         text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`
     };
 
@@ -145,8 +158,8 @@ router.put('/notifications/read-all', notificationController.markAllAsRead);
 
 router.put('/add-to-cart', authenticateUser, productController.addToCart);
 router.get('/cart',productController.displayCart);
-router.post("/update-cart", productController.updateCart);
-router.get("/remove-from-cart/:productId", productController.removeFromCart);
+router.put("/update-cart/:itemId", productController.updateCartItem);
+router.delete("/remove-from-cart/:itemId", productController.removeFromCart);
 
 router.put('/admin-make-admin/:id', authController.makeAdmin);
 router.put('/admin-block-user/:id', authController.blockUser);

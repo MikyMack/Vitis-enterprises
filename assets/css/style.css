@@ -256,8 +256,8 @@ font-family: 'Nunito', sans-serif;
   /* Lighten */
   --ltn__heading-color: #071c1f;
   --ltn__paragraph-color: #5C727D;
-  --ltn__heading-font: 'Josefin Sans', sans-serif;
-  --ltn__body-font: 'Nunito Sans', sans-serif;
+  --ltn__heading-font: monospace;
+  --ltn__body-font: monospace;
   /* Footer ACD2D8 8CB2B2  */
   --ltn__color-1: #8cb2b2;
   --ltn__color-2: #ACD2D8;
@@ -9337,7 +9337,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 }
 
 .product-info {
-  padding: 20px 0 0;
+  padding: 10px 0 0;
 }
 
 .product-price {
@@ -9406,7 +9406,8 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 }
 
 .ltn__product-item-2 .product-price {
-  font-size: 14px;
+  font-size: 20px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .ltn__product-item-2 .product-price del {
@@ -9453,9 +9454,11 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 }
 
 .ltn__product-item-3 .product-price {
-  font-size: 14px;
+
   color: #FF0000;
-  font-weight: 700;
+ 
+  font-size: 20px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .ltn__product-item-3 .product-price del {
@@ -9882,7 +9885,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 .modal-product-info .product-price {
   font-size: 25px;
   margin-bottom: 10px;
-  color: #FF0000;
+  color: #639f74;
   line-height: 1.2;
   font-weight: 600;
 }
@@ -11399,10 +11402,11 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 }
 
 .ltn__section-title-2 .section-title {
-  font-size: 44px;
-  font-weight: 700;
+  font-size: 40px;
+  font-weight: 600;
   margin-bottom: 15px;
   line-height: 1.3;
+  font-family: monospace;
 }
 
 .ltn__section-title-2 p {
@@ -11487,7 +11491,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 
 @media (max-width: 1599px) {
   .ltn__section-title-2 .section-title {
-    font-size: 60px;
+    font-size: 40px;
   }
 }
 
@@ -19849,5 +19853,16 @@ input[type=checkbox]:checked:disabled + label:before {
 }
 .back-home {
   max-width: 150px;
+}
+
+.Allproduct-image {
+  height: 300px;
+  object-fit: cover;
+}
+
+@media (max-width:767px){
+  .Allproduct-image {
+    height: 200px;
+  }
 }
 

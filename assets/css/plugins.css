@@ -16003,11 +16003,9 @@ a[class*=lightcase-icon-].lightcase-icon-play {
   font-family: inherit;
   font-size: 14px;
   font-weight: 400;
-  height: 42px;
-  line-height: 40px;
   outline: 0;
-  padding-left: 18px;
-  padding-right: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
   position: relative;
   text-align: left !important;
   -webkit-transition: all .2s ease-in-out;
@@ -16017,7 +16015,7 @@ a[class*=lightcase-icon-].lightcase-icon-play {
   -ms-user-select: none;
   user-select: none;
   white-space: nowrap;
-  width: auto
+  width: 150px;
 }
 
 .nice-select:hover {
@@ -16030,7 +16028,7 @@ a[class*=lightcase-icon-].lightcase-icon-play {
   border-color: #999
 }
 
-.nice-select:after {
+/* .nice-select:after {
   border-bottom: 2px solid #999;
   border-right: 2px solid #999;
   content: '';
@@ -16050,7 +16048,7 @@ a[class*=lightcase-icon-].lightcase-icon-play {
   -webkit-transition: all .15s ease-in-out;
   transition: all .15s ease-in-out;
   width: 5px
-}
+} */
 
 .nice-select.open:after {
   -webkit-transform: rotate(-135deg);

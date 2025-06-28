@@ -26,7 +26,7 @@ app.set('views', path.join(__dirname, '../views'));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(cookieParser());
-app.use(authenticateUser); // This runs on every request
+app.use(authenticateUser); 
 
 
 app.use(methodOverride('_method'));

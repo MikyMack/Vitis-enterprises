@@ -240,7 +240,7 @@
                                                     <img src="admin-images/avatar/user-1.png" alt="">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-text text-main-dark">Maxtron</span>
+                                                    <span class="body-text text-main-dark">Vitis</span>
                                                     <span class="text-tiny">Admin</span>
                                                 </span>
                                             </span>
@@ -302,9 +302,7 @@
                                     </ul>
                                 </div>
                                 <!-- form-add-product -->
-                                <!-- form-add-product -->
-                                <form class="form-add-product" action="/products/create" method="POST"
-                                    enctype="multipart/form-data">
+                                <form class="form-add-product" action="/products/create" method="POST" enctype="multipart/form-data">
                                     <div class="wg-box mb-30">
                                         <fieldset>
                                             <div class="body-title mb-10">Upload images</div>
@@ -314,142 +312,237 @@
                                                         <span class="icon">
                                                             <i class="icon-upload-cloud"></i>
                                                         </span>
-                                                        <div class="text-tiny">Drop your images here or select <span
-                                                                class="text-secondary">click to browse</span></div>
-                                                        <input type="file" id="myFile" name="productsImages" multiple>
+                                                        <div class="text-tiny">Drop your images here or select <span class="text-secondary">click to browse</span></div>
+                                                        <input type="file" id="myFile" name="productsImages" multiple accept="image/*" max="4" required>
                                                         <img src="#" id="myFile-input" alt="">
                                                     </label>
                                                 </div>
-                                                <div class="flex gap20 flex-wrap">
+                                                <div class="flex gap20 flex-wrap" id="image-preview-container">
+                                                    <!-- Image previews will appear here -->
                                                 </div>
                                             </div>
-                                            <div class="body-text">You need to add at least 1 and at most 4 images. Pay
-                                                attention to the quality of the pictures you add, comply with the
-                                                background color standards. Pictures must be in certain dimensions.
-                                            </div>
+                                            <div class="body-text">You need to add at least 1 and at most 4 images. Pay attention to the quality of the pictures you add, comply with the background color standards. Pictures must be in certain dimensions.</div>
                                         </fieldset>
                                     </div>
-
+                    
                                     <div class="wg-box mb-30">
                                         <fieldset class="name">
-                                            <div class="body-title mb-10">Product title <span
-                                                    class="tf-color-1">*</span></div>
-                                            <input class="mb-10" type="text" placeholder="Enter title" name="title"
-                                                tabindex="0" value="" aria-required="true" required="">
-                                            <div class="text-tiny text-surface-2">Do not exceed 20 characters when
-                                                entering the product name.</div>
+                                            <div class="body-title mb-10">Product title <span class="tf-color-1">*</span></div>
+                                            <input class="mb-10" type="text" placeholder="Enter title" name="title" maxlength="100" required>
+                                            <div class="text-tiny text-surface-2">Do not exceed 100 characters when entering the product name.</div>
                                         </fieldset>
-                                        <fieldset class="">
-                                            <div class="body-title mb-10">Product Description <span
-                                                    class="tf-color-1">*</span></div>
-                                            <textarea class="mb-10" name="productDescription"
-                                                placeholder="Enter product description" tabindex="0"
-                                                aria-required="true" required=""></textarea>
-                                        </fieldset>
+                                        
                                         <fieldset class="category">
-                                            <div class="body-title mb-10">Category <span class="tf-color-1">*</span>
-                                            </div>
+                                            <div class="body-title mb-10">Category <span class="tf-color-1">*</span></div>
                                             <input type="text" placeholder="Enter category" name="category" required>
                                         </fieldset>
-                                    </div>
-
-                                    <div class="wg-box mb-30">
-                                        <fieldset class="measurements">
-                                            <div class="body-title mb-10">Measurements <span class="tf-color-1">*</span>
+                                        
+                                        <fieldset class="product-description">
+                                            <div class="body-title mb-10">Product Description Points <span class="tf-color-1">*</span></div>
+                                            <div class="description-points">
+                                                <div class="point mb-10">
+                                                    <input type="text" placeholder="Description point" name="productDescription[0].point" required>
+                                                </div>
                                             </div>
-                                            <div class="measurement mb-10">
-                                                <div class="name mb-10"><input type="number" min="0"
-                                                        placeholder="Length" name="measurements[0].length" required>
-                                                </div>
-
-                                                <div class="name mb-10"> <input type="number" min="0"
-                                                        placeholder="Width" name="measurements[0].width" required></div>
-
-                                                <div class="name mb-10"> <input type="number" min="0"
-                                                        placeholder="Price" name="measurements[0].price" required></div>
-
-                                                <div class="name mb-10"><input type="number" min="0"
-                                                        placeholder="Offer Price" name="measurements[0].offerPrice">
-                                                </div>
-
-                                                <div class="name mb-10"> <input type="number" min="0"
-                                                        placeholder="Stocks" name="measurements[0].stocks" required>
-                                                </div>
-
-                                            </div>
-                                            <button type="button" class="add-measurement">Add another
-                                                measurement</button>
+                                            <button type="button" class="add-point">Add another description point</button>
                                         </fieldset>
                                     </div>
-
+                    
+                                    <div class="wg-box mb-30">
+                                        <fieldset class="base-pricing">
+                                            <div class="body-title mb-10">Base Price &amp; Stock (optional, used if no variants)</div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Base Price" name="basePrice">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Base Offer Price" name="baseOfferPrice">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" placeholder="Base Stocks" name="baseStocks">
+                                            </div>
+                                            <div class="text-tiny text-surface-2">If you do not use color or measurement variants, set the base price and stock here.</div>
+                                        </fieldset>
+                                    </div>
+                    
+                                    <div class="wg-box mb-30">
+                                        <fieldset class="color-variants">
+                                            <div class="body-title mb-10">Color Variants (optional)</div>
+                                            <div class="color-variant mb-10">
+                                                <div class="name mb-10">
+                                                    <input type="text" placeholder="Color Name" name="colorVariants[0].colorName">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="color" placeholder="Color Code" name="colorVariants[0].colorCode">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[0].price">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" step="0.01" placeholder="Offer Price" name="colorVariants[0].offerPrice">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" placeholder="Stocks" name="colorVariants[0].stocks">
+                                                </div>
+                                            </div>
+                                            <button type="button" class="add-color-variant">Add another color variant</button>
+                                            <div class="text-tiny text-surface-2">Leave blank if not using color variants.</div>
+                                        </fieldset>
+                                    </div>
+                    
+                                    <div class="wg-box mb-30">
+                                        <fieldset class="measurements">
+                                            <div class="body-title mb-10">Measurements (optional)</div>
+                                            <div class="measurement mb-10">
+                                                <div class="name mb-10">
+                                                    <input type="text" placeholder="Measurement (e.g., Small, Medium)" name="measurements[0].measurement">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" step="0.01" placeholder="Price" name="measurements[0].price">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" step="0.01" placeholder="Offer Price" name="measurements[0].offerPrice">
+                                                </div>
+                                                <div class="name mb-10">
+                                                    <input type="number" min="0" placeholder="Stocks" name="measurements[0].stocks">
+                                                </div>
+                                            </div>
+                                            <button type="button" class="add-measurement">Add another measurement</button>
+                                            <div class="text-tiny text-surface-2">Leave blank if not using measurement variants.</div>
+                                        </fieldset>
+                                    </div>
+                    
                                     <fieldset class="wg-box mb-30">
-                                        <div class="body-title mb-10">Customer Reviews</div>
+                                        <div class="body-title mb-10">Customer Reviews (optional)</div>
                                         <div class="reviews-section">
                                             <div class="review mb-10">
                                                 <div class="name mb-10">
-                                                    <input type="text" placeholder="Review Title"
-                                                        name="customerReviews[0].title" required>
+                                                    <input type="text" placeholder="Review Title" name="customerReviews[0].title">
                                                 </div>
                                                 <div class="category mb-10">
-                                                    <textarea name="customerReviews[0].description"
-                                                        placeholder="Write a review" required></textarea>
+                                                    <textarea name="customerReviews[0].description" placeholder="Write a review"></textarea>
                                                 </div>
                                                 <div class="date">
-                                                    <input type="date" name="customerReviews[0].date" required>
+                                                    <input type="date" name="customerReviews[0].date">
                                                 </div>
                                             </div>
                                             <button type="button" class="add-review">Add another review</button>
                                         </div>
                                     </fieldset>
-
+                    
                                     <div class="cols gap10">
                                         <button class="tf-button w380" type="submit">Add product</button>
-                                        <a href="#" class="tf-button style-3 w380">Cancel</a>
+                                        <a href="/admin-products-list" class="tf-button style-3 w380">Cancel</a>
                                     </div>
                                 </form>
+                    
                                 <script>
-                                    let reviewIndex = 1; // Start from the second review
-                                    document.querySelector('.add-review').addEventListener('click', function () {
-                                        const reviewSection = document.querySelector('.reviews-section');
-                                        const newReview = document.createElement('div');
-                                        newReview.classList.add('review', 'mb-10');
-                                        newReview.innerHTML = `
-                                    <div class="name mb-10">
-                                        <input type="text" placeholder="Review Title" name="customerReviews[${reviewIndex}].title" required>
-                                    </div>
-                                    <div class="category mb-10">
-                                        <textarea name="customerReviews[${reviewIndex}].description" placeholder="Write a review" required></textarea>
-                                    </div>
-                                    <div class="date">
-                                        <input type="date" name="customerReviews[${reviewIndex}].date" required>
-                                    </div>
-                                `;
-                                        reviewSection.appendChild(newReview);
-                                        reviewIndex++;
+                                    // Image preview functionality
+                                    document.getElementById('myFile').addEventListener('change', function(e) {
+                                        const container = document.getElementById('image-preview-container');
+                                        container.innerHTML = '';
+                                        
+                                        if (this.files.length > 4) {
+                                            alert('You can upload a maximum of 4 images');
+                                            this.value = '';
+                                            return;
+                                        }
+                                        
+                                        Array.from(this.files).forEach(file => {
+                                            const reader = new FileReader();
+                                            reader.onload = function(e) {
+                                                const img = document.createElement('img');
+                                                img.src = e.target.result;
+                                                img.style.maxWidth = '100px';
+                                                img.style.maxHeight = '100px';
+                                                img.style.margin = '5px';
+                                                container.appendChild(img);
+                                            }
+                                            reader.readAsDataURL(file);
+                                        });
                                     });
-
-                                    let measurementIndex = 1; // Start from the second measurement
-                                    document.querySelector('.add-measurement').addEventListener('click', function () {
+                    
+                                    // Dynamic form fields
+                                    let pointIndex = 1;
+                                    document.querySelector('.add-point').addEventListener('click', function() {
+                                        const pointsSection = document.querySelector('.description-points');
+                                        const newPoint = document.createElement('div');
+                                        newPoint.classList.add('point', 'mb-10');
+                                        newPoint.innerHTML = `
+                                            <input type="text" placeholder="Description point" name="productDescription[${pointIndex}].point" required>
+                                        `;
+                                        pointsSection.appendChild(newPoint);
+                                        pointIndex++;
+                                    });
+                    
+                                    let colorVariantIndex = 1;
+                                    document.querySelector('.add-color-variant').addEventListener('click', function() {
+                                        const colorSection = document.querySelector('.color-variants');
+                                        const newColorVariant = document.createElement('div');
+                                        newColorVariant.classList.add('color-variant', 'mb-10');
+                                        newColorVariant.innerHTML = `
+                                            <div class="name mb-10">
+                                                <input type="text" placeholder="Color Name" name="colorVariants[${colorVariantIndex}].colorName">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="color" placeholder="Color Code" name="colorVariants[${colorVariantIndex}].colorCode">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[${colorVariantIndex}].price">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Offer Price" name="colorVariants[${colorVariantIndex}].offerPrice">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" placeholder="Stocks" name="colorVariants[${colorVariantIndex}].stocks">
+                                            </div>
+                                        `;
+                                        colorSection.insertBefore(newColorVariant, this);
+                                        colorVariantIndex++;
+                                    });
+                    
+                                    let measurementIndex = 1;
+                                    document.querySelector('.add-measurement').addEventListener('click', function() {
                                         const measurementSection = document.querySelector('.measurements');
                                         const newMeasurement = document.createElement('div');
                                         newMeasurement.classList.add('measurement', 'mb-10');
                                         newMeasurement.innerHTML = `
-                                        <div class="name mb-10"> <input type="number" min="0" placeholder="Length" name="measurements[${measurementIndex}].length" required></div>
-                                   
-                                     <div class="name mb-10"> <input type="number" min="0" placeholder="Width" name="measurements[${measurementIndex}].width" required></div>
-                                   
-                                     <div class="name mb-10"> <input type="number" min="0" placeholder="Price" name="measurements[${measurementIndex}].price" required></div>
-                                   
-                                     <div class="name mb-10"> <input type="number" min="0" placeholder="Offer Price" name="measurements[${measurementIndex}].offerPrice"></div>
-                                   
-                                     <div class="name mb-10"> <input type="number" min="0" placeholder="Stocks" name="measurements[${measurementIndex}].stocks" required></div>
-                                   
-                                `;
-                                        measurementSection.appendChild(newMeasurement);
+                                            <div class="name mb-10">
+                                                <input type="text" placeholder="Measurement (e.g., Small, Medium)" name="measurements[${measurementIndex}].measurement">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Price" name="measurements[${measurementIndex}].price">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" step="0.01" placeholder="Offer Price" name="measurements[${measurementIndex}].offerPrice">
+                                            </div>
+                                            <div class="name mb-10">
+                                                <input type="number" min="0" placeholder="Stocks" name="measurements[${measurementIndex}].stocks">
+                                            </div>
+                                        `;
+                                        measurementSection.insertBefore(newMeasurement, this);
                                         measurementIndex++;
                                     });
+                    
+                                    let reviewIndex = 1;
+                                    document.querySelector('.add-review').addEventListener('click', function() {
+                                        const reviewSection = document.querySelector('.reviews-section');
+                                        const newReview = document.createElement('div');
+                                        newReview.classList.add('review', 'mb-10');
+                                        newReview.innerHTML = `
+                                            <div class="name mb-10">
+                                                <input type="text" placeholder="Review Title" name="customerReviews[${reviewIndex}].title">
+                                            </div>
+                                            <div class="category mb-10">
+                                                <textarea name="customerReviews[${reviewIndex}].description" placeholder="Write a review"></textarea>
+                                            </div>
+                                            <div class="date">
+                                                <input type="date" name="customerReviews[${reviewIndex}].date">
+                                            </div>
+                                        `;
+                                        reviewSection.insertBefore(newReview, this);
+                                        reviewIndex++;
+                                    });
                                 </script>
-
                                 <!-- /form-add-product -->
                             </div>
                             <!-- /main-content-wrap -->
@@ -457,8 +550,7 @@
                         <!-- /main-content-wrap -->
                         <!-- bottom-page -->
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2025 <a href="https://trivlogic.com">Trivlogic</a>.
-                                Design by Trivlogic All rights reserved</div>
+                            <div class="body-text">Copyright © 2025 <a href="https://trivlogic.com">Trivlogic</a>. Design by Trivlogic All rights reserved</div>
                         </div>
                         <!-- /bottom-page -->
                     </div>

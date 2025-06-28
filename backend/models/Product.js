@@ -6,18 +6,40 @@ const reviewSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
 });
 
-const measurementSchema = new mongoose.Schema({
-    length: { type: Number, required: true, default: 0 },
-    width: { type: Number, required: true, default: 0 },
-    price: { type: Number, required: true, min: 0 },  // Price for this measurement
-    offerPrice: { type: Number, min: 0 },  // Optional offer price
-    stocks: { type: Number, required: true, min: 0 }, // Stock for this option
+const colorVariantSchema = new mongoose.Schema({
+    colorName: { type: String, trim: true, required: true },
+    colorCode: { type: String, trim: true, required: false }, 
+    price: { type: Number, required: true, min: 0 },
+    offerPrice: { type: Number, min: 0 },
+    stocks: { type: Number, min: 0 },
+}, { _id: false });
+
+const measurementOptionSchema = new mongoose.Schema({
+    measurement: { 
+        type: String, 
+        trim: true, 
+        required: true,
+    },
+    price: { type: Number, required: true, min: 0 },
+    offerPrice: { type: Number, min: 0 },
+    stocks: { type: Number, required: true, min: 0 },
+}, { _id: false });
+
+const productDescriptionPointSchema = new mongoose.Schema({
+    point: { type: String, trim: true, required: true }
 }, { _id: false });
 
 const productSchema = new mongoose.Schema({
     category: { type: String, trim: true, required: true },
     title: { type: String, trim: true, required: true },
-    productDescription: { type: String, trim: true, required: true },
+    productDescription: { 
+        type: [productDescriptionPointSchema], 
+        required: true,
+        validate: {
+            validator: (val) => Array.isArray(val) && val.length > 0,
+            message: "Product description must have at least one point."
+        }
+    },
     images: {
         type: [String],
         validate: {
@@ -26,7 +48,11 @@ const productSchema = new mongoose.Schema({
         },
         required: true,
     },
-    measurements: { type: [measurementSchema], required: true }, // Multiple measurement options
+    basePrice: { type: Number, min: 0 },
+    baseOfferPrice: { type: Number, min: 0 },
+    baseStocks: { type: Number, min: 0 },
+    measurements: { type: [measurementOptionSchema], required: false, default: undefined },
+    colorVariants: { type: [colorVariantSchema], required: false, default: undefined },
     toggled: { type: Boolean, default: true },
     customerReviews: { type: [reviewSchema], default: [] },
 });
