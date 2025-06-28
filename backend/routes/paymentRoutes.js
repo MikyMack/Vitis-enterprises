@@ -64,34 +64,70 @@ router.post("/payu/success", async (req, res) => {
             const tempOrder = await TempOrder.findOne({ txnid });
 
             if (!tempOrder) {
-                return res.status(400).send("Order details not found.");
+                return res.status(400).render('payment-error', {
+                    message: "Order details not found."
+                });
             }
+
+            // Transform items to match Order schema
+            const orderItems = tempOrder.items.map(item => ({
+                product: item.productId || item.product, // Handle both cases
+                title: item.title || item.productId?.title,
+                image: item.image || item.productId?.images?.[0],
+                selectedMeasurement: item.selectedMeasurement || null,
+                selectedColor: item.selectedColor || null,
+                quantity: item.quantity,
+                price: item.price || 
+                      item.selectedMeasurement?.offerPrice || 
+                      item.selectedMeasurement?.price || 
+                      item.selectedColor?.offerPrice || 
+                      item.selectedColor?.price || 
+                      0,
+                priceSource: item.priceSource || 'base'
+            }));
 
             const order = new Order({
                 user: tempOrder.userId,
-                items: tempOrder.items,
+                items: orderItems,
                 totalAmount: tempOrder.totalAmount,
                 billingAddress: tempOrder.billingAddress,
-                paymentMethod: "Online",
-                deliveryAddress: tempOrder.deliveryAddress?.fullName ? tempOrder.deliveryAddress : tempOrder.billingAddress,
+                payment: {
+                    method: "Online",
+                    transactionId: mihpayid,
+                    status: "Completed",
+                    amount: tempOrder.totalAmount,
+                    gateway: "PayU"
+                },
+                deliveryAddress: tempOrder.deliveryAddress || tempOrder.billingAddress,
                 orderNotes: tempOrder.orderNotes,
-                status: "Processing",
+                status: "Processing"
             });
 
             await order.save();
-            await Cart.deleteOne({ userId: tempOrder.userId });
-            await TempOrder.deleteOne({ txnid }); // cleanup
+            
+            // Cleanup
+            await Promise.all([
+                Cart.deleteOne({ userId: tempOrder.userId }),
+                TempOrder.deleteOne({ txnid })
+            ]);
 
-            res.render("success", {
-                txnid,
-                order
+            // Successful response
+            return res.render("payment-success", {
+                title: "Order Confirmation",
+                order,
+                transactionId: mihpayid
             });
+
         } else {
-            res.status(400).send("Payment failed. Order not placed.");
+            return res.status(400).render('payment-error', {
+                message: "Payment failed. Order not placed."
+            });
         }
     } catch (error) {
         console.error("Error in /payu/success:", error);
-        res.status(500).send("An error occurred while processing your payment.");
+        return res.status(500).render('payment-error', {
+            message: "An error occurred while processing your payment."
+        });
     }
 });
 

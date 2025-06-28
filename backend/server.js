@@ -2,7 +2,7 @@ require('dotenv').config({ path: './backend/.env' });
 const mongoose = require('mongoose');
 const app = require('./app');
 
-const PORT = process.env.PORT || 5009;
+const PORT = process.env.PORT || 5015;
 const MONGO_URI = process.env.MONGO_URI;
 
 // Connect to MongoDB

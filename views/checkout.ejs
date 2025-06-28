@@ -497,18 +497,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- COD -->
-                                        <div class="card">
-                                            <h5 class="ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-2" aria-expanded="false">
-                                                <input id="paymentCOD" type="radio" name="paymentMethod" value="COD">
-                                                <label for="paymentCOD">Cash on delivery</label>
-                                            </h5>
-                                            <div id="faq-item-2-2" class="collapse" data-bs-parent="#checkout_accordion_1">
-                                                <div class="card-body">
-                                                    <p>Pay with cash upon delivery.</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                  
                                     </div>
                                     <div class="ltn__payment-note mt-30 mb-30">
                                         <p>Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
@@ -574,18 +563,9 @@
     const formData = new FormData(form);
     
     try {
-        // Parse cart items and calculate total amount safely
+        // Use totalAmount from the form itself
         const cartItems = JSON.parse(formData.get('cartItems'));
-        const calculatedTotal = cartItems.reduce((total, item) => {
-            const price = item.selectedMeasurement?.offerPrice || 
-                         item.selectedMeasurement?.price || 
-                         item.selectedColor?.offerPrice || 
-                         item.selectedColor?.price || 
-                         item.productId?.baseOfferPrice || 
-                         item.productId?.basePrice || 
-                         0;
-            return total + (price * item.quantity);
-        }, 0);
+        const totalAmount = parseFloat(formData.get('totalAmount')) || 0;
 
         // Prepare data object
         const data = {
@@ -603,7 +583,7 @@
                       item.productId?.basePrice || 
                       0
             })),
-            totalAmount: calculatedTotal, // Use calculated value instead of form value
+            totalAmount: totalAmount,
             billingAddress: {
                 fullName: formData.get('billingAddress[fullName]'),
                 email: formData.get('billingAddress[email]'),
@@ -642,7 +622,6 @@
 
         if (result.success) {
             if (result.payuData) {
-                // Redirect to PayU payment page
                 const payuUrl = "https://secure.payu.in/_payment";
                 const form = document.createElement("form");
                 form.method = "POST";
