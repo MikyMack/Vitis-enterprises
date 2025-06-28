@@ -3,26 +3,78 @@ const Order = require('../models/Order');
 // 🛒 Place an Order (User)
 exports.placeOrder = async (req, res) => {
     try {
-        const { userId, items, totalAmount, billingAddress, deliveryAddress, paymentMethod } = req.body;
+        const { userId, tempOrderId, transactionId } = req.body;
 
-        if (!userId || !items.length || !totalAmount || !billingAddress || !deliveryAddress || !paymentMethod) {
-            return res.status(400).json({ message: "Invalid order details" });
+        // Validate input
+        if (!userId || !tempOrderId || !transactionId) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Missing required parameters" 
+            });
         }
 
-        const newOrder = new Order({
+        // Get temporary order
+        const tempOrder = await TempOrder.findById(tempOrderId);
+        if (!tempOrder || tempOrder.userId.toString() !== userId.toString()) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Order not found or access denied" 
+            });
+        }
+
+        // Create final order
+        const order = new Order({
             user: userId,
-            items,
-            totalAmount,
-            billingAddress,
-            deliveryAddress,
-            paymentMethod
+            items: tempOrder.items.map(item => ({
+                product: item.productId,
+                title: item.title,
+                image: item.image,
+                selectedMeasurement: item.selectedMeasurement,
+                selectedColor: item.selectedColor,
+                quantity: item.quantity,
+                price: item.selectedMeasurement?.offerPrice || 
+                      item.selectedMeasurement?.price || 
+                      item.selectedColor?.offerPrice || 
+                      item.selectedColor?.price || 
+                      item.offerPrice || 
+                      item.price,
+                priceSource: item.priceSource
+            })),
+            totalAmount: tempOrder.totalAmount,
+            billingAddress: tempOrder.billingAddress,
+            deliveryAddress: tempOrder.deliveryAddress,
+            payment: {
+                method: 'Online',
+                transactionId,
+                status: 'Completed',
+                amount: tempOrder.totalAmount,
+                gateway: 'PayU'
+            },
+            orderNotes: tempOrder.orderNotes,
+            status: 'Processing'
         });
 
-        await newOrder.save();
+        await order.save();
 
-        res.status(201).json({ success: true, message: "Order placed successfully!", order: newOrder });
+        // Clear temporary order and user's cart
+        await Promise.all([
+            TempOrder.deleteOne({ _id: tempOrderId }),
+            Cart.deleteOne({ userId })
+        ]);
+
+        res.status(201).json({ 
+            success: true, 
+            message: "Order placed successfully!", 
+            order 
+        });
+
     } catch (error) {
-        res.status(500).json({ message: "Error placing order", error });
+        console.error("Order placement error:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: "Error finalizing order",
+            error: error.message 
+        });
     }
 };
 

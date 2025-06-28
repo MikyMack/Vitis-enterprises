@@ -382,38 +382,38 @@
                                                 <% product.colorVariants.forEach(function(variant, idx) { %>
                                                     <div class="color-variant mb-10">
                                                         <div class="name mb-10">
-                                                            <input type="text" placeholder="Color Name" name="colorVariants[<%= idx %>].colorName" value="<%= variant.colorName %>" required>
+                                                            <input type="text" placeholder="Color Name" name="colorVariants[<%= idx %>].colorName" value="<%= variant.colorName %>" >
                                                         </div>
                                                         <div class="name mb-10">
                                                             <input type="color" placeholder="Color Code" name="colorVariants[<%= idx %>].colorCode" value="<%= variant.colorCode %>">
                                                         </div>
                                                         <div class="name mb-10">
-                                                            <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[<%= idx %>].price" value="<%= variant.price %>" required>
+                                                            <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[<%= idx %>].price" value="<%= variant.price %>" >
                                                         </div>
                                                         <div class="name mb-10">
                                                             <input type="number" min="0" step="0.01" placeholder="Offer Price" name="colorVariants[<%= idx %>].offerPrice" value="<%= variant.offerPrice %>">
                                                         </div>
                                                         <div class="name mb-10">
-                                                            <input type="number" min="0" placeholder="Stocks" name="colorVariants[<%= idx %>].stocks" value="<%= variant.stocks %>" required>
+                                                            <input type="number" min="0" placeholder="Stocks" name="colorVariants[<%= idx %>].stocks" value="<%= variant.stocks %>" >
                                                         </div>
                                                     </div>
                                                 <% }); %>
                                             <% } else { %>
                                                 <div class="color-variant mb-10">
                                                     <div class="name mb-10">
-                                                        <input type="text" placeholder="Color Name" name="colorVariants[0].colorName" required>
+                                                        <input type="text" placeholder="Color Name" name="colorVariants[0].colorName" >
                                                     </div>
                                                     <div class="name mb-10">
                                                         <input type="color" placeholder="Color Code" name="colorVariants[0].colorCode">
                                                     </div>
                                                     <div class="name mb-10">
-                                                        <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[0].price" required>
+                                                        <input type="number" min="0" step="0.01" placeholder="Price" name="colorVariants[0].price" >
                                                     </div>
                                                     <div class="name mb-10">
                                                         <input type="number" min="0" step="0.01" placeholder="Offer Price" name="colorVariants[0].offerPrice">
                                                     </div>
                                                     <div class="name mb-10">
-                                                        <input type="number" min="0" placeholder="Stocks" name="colorVariants[0].stocks" required>
+                                                        <input type="number" min="0" placeholder="Stocks" name="colorVariants[0].stocks" >
                                                     </div>
                                                 </div>
                                             <% } %>

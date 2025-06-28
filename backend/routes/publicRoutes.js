@@ -142,7 +142,7 @@ router.get('/shop', async (req, res) => {
         const skip = (page - 1) * perPage;
 
         // Filters
-        const sort = req.query.sort || ''; // '' means default sorting
+        const sort = req.query.sort || ''; 
         const category = req.query.category;
 
         let filter = { toggled: true };
@@ -152,7 +152,6 @@ router.get('/shop', async (req, res) => {
 
         let sortObj = {};
         if (sort === 'popularity') {
-            // You can define your own popularity logic here, for now, fallback to latest
             sortObj = { _id: -1 };
         } else if (sort === 'new') {
             sortObj = { _id: -1 };
@@ -161,7 +160,7 @@ router.get('/shop', async (req, res) => {
         } else if (sort === 'price-desc') {
             sortObj = { basePrice: -1 };
         } else {
-            sortObj = { _id: -1 }; // Default: latest
+            sortObj = { _id: -1 }; 
         }
 
         const totalProducts = await Product.countDocuments(filter);
@@ -360,8 +359,17 @@ router.get('/checkout', async (req, res) => {
                     if (cart) {
                         cartItems = cart.items;
                         totalAmount = cartItems.reduce((total, item) => {
-                            return total + (item.selectedMeasurement.offerPrice || item.selectedMeasurement.price) * item.quantity;
-                        }, 0);
+                            // Safely calculate price with fallbacks
+                            const price = item.selectedMeasurement?.offerPrice || 
+                                         item.selectedMeasurement?.price || 
+                                         item.selectedColor?.offerPrice || 
+                                         item.selectedColor?.price || 
+                                         item.productId?.baseOfferPrice || 
+                                         item.productId?.basePrice || 
+                                         0;
+                            return total + (price * item.quantity);
+      
+                  }, 0);
                     }
                 }
             } catch (err) {
@@ -369,11 +377,16 @@ router.get('/checkout', async (req, res) => {
             }
         }
 
+        // Ensure totalAmount is a valid number
+        if (isNaN(totalAmount)) {
+            console.error("Invalid totalAmount calculation - setting to 0");
+            totalAmount = 0;
+        }
         res.render('checkout', { 
             title: 'Checkout Page', 
             user, 
             cartItems, 
-            totalAmount 
+            totalAmount: totalAmount.toFixed(2) 
         });
     } catch (error) {
         console.error("Checkout Page Error:", error);

@@ -473,30 +473,22 @@
                                         <tbody id="cart-totals-tbody">
                                             <% if (!isGuest) { %>
                                                 <tr>
-                                                    <td>Cart Subtotal</td>
+                                                    <td>Cart Total</td>
                                                     <td>₹<%= subtotal.toFixed(2) %>
                                                     </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Shipping and Handling</td>
-                                                    <td>₹<%= shipping.toFixed(2) %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Vat</td>
-                                                    <td>₹<%= vat.toFixed(2) %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Order Total</strong></td>
-                                                    <td><strong>₹<%= total.toFixed(2) %></strong></td>
                                                 </tr>
                                             <% } %>
                                         </tbody>
                                     </table>
-                                    <div class="btn-wrapper text-right">
-                                        <a href="/checkout" class="theme-btn-1 btn btn-effect-1">Proceed to checkout</a>
-                                    </div>
+                                    <% if (isGuest) { %>
+                                        <div class="btn-wrapper text-right">
+                                            <a href="/user-login" class="theme-btn-1 btn btn-effect-1">Login to checkout</a>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="btn-wrapper text-right">
+                                            <a href="/checkout" class="theme-btn-1 btn btn-effect-1">Proceed to checkout</a>
+                                        </div>
+                                    <% } %>
                                 </div>
                             <% } %>
                         </div>
@@ -511,10 +503,9 @@
                                     const price = item.offerPrice ?? item.price;
                                     subtotal += price * item.quantity;
                                 });
-                                const shipping = subtotal > 0 ? 50 : 0;
-                                const vat = subtotal * 0.05;
-                                const total = subtotal + shipping + vat;
-                                return { subtotal, shipping, vat, total };
+                                // No shipping, no vat, total = subtotal
+                                const total = subtotal;
+                                return { subtotal, total };
                             }
 
                             <% if (isGuest) { %>
@@ -611,20 +602,8 @@
                                     if (totalsTbody) {
                                         totalsTbody.innerHTML = `
                                             <tr>
-                                                <td>Cart Subtotal</td>
+                                                <td>Cart Total</td>
                                                 <td>₹${totals.subtotal.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Shipping and Handling</td>
-                                                <td>₹${totals.shipping.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Vat</td>
-                                                <td>₹${totals.vat.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Order Total</strong></td>
-                                                <td><strong>₹${totals.total.toFixed(2)}</strong></td>
                                             </tr>
                                         `;
                                     }
@@ -632,7 +611,6 @@
                                     attachGuestCartEventListeners();
                                 }
 
-                                // Attach event listeners for quantity changes and remove buttons (same logic as user cart)
                                 function attachGuestCartEventListeners() {
                                     const tbody = document.getElementById('cart-items-tbody');
                                     if (tbody) {
@@ -671,20 +649,8 @@
                                                 if (totalsTbody) {
                                                     totalsTbody.innerHTML = `
                                                         <tr>
-                                                            <td>Cart Subtotal</td>
+                                                            <td>Cart Total</td>
                                                             <td>₹${totals.subtotal.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Shipping and Handling</td>
-                                                            <td>₹${totals.shipping.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Vat</td>
-                                                            <td>₹${totals.vat.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><strong>Order Total</strong></td>
-                                                            <td><strong>₹${totals.total.toFixed(2)}</strong></td>
                                                         </tr>
                                                     `;
                                                 }
@@ -734,20 +700,8 @@
                                                 if (totalsTbody) {
                                                     totalsTbody.innerHTML = `
                                                         <tr>
-                                                            <td>Cart Subtotal</td>
+                                                            <td>Cart Total</td>
                                                             <td>₹${totals.subtotal.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Shipping and Handling</td>
-                                                            <td>₹${totals.shipping.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Vat</td>
-                                                            <td>₹${totals.vat.toFixed(2)}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><strong>Order Total</strong></td>
-                                                            <td><strong>₹${totals.total.toFixed(2)}</strong></td>
                                                         </tr>
                                                     `;
                                                 }

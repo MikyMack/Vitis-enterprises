@@ -10620,7 +10620,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   border: 2px solid #ededed;
   height: 50px;
   line-height: 46px;
-  min-width: 190px;
+  min-width: 100%;
 }
 
 .ltn__shop-options .short-by .nice-select .option {

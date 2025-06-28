@@ -12,22 +12,9 @@ router.post("/checkoutApi", async (req, res) => {
     try {
         const { userId, items, totalAmount, billingAddress, paymentMethod, orderNotes, deliveryAddress } = req.body;
 
-        if (paymentMethod === "COD") {
-            const order = new Order({
-                user: userId,
-                items,
-                totalAmount,
-                billingAddress,
-                paymentMethod,
-                deliveryAddress,
-                orderNotes,
-                status: "Processing",
-            });
-
-            await order.save();
-            await Cart.deleteOne({ userId });
-
-            return res.json({ success: true, message: "Order placed successfully and cart deleted!" });
+        // Only allow online payment
+        if (paymentMethod !== "Online") {
+            return res.status(400).json({ success: false, message: "Only online payment is supported." });
         }
 
         // Create unique txnid
