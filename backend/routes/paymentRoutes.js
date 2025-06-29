@@ -61,30 +61,35 @@ router.post("/payu/success", async (req, res) => {
         const { txnid, mihpayid, status } = req.body;
 
         if (status === "success") {
-            const tempOrder = await TempOrder.findOne({ txnid });
+            const tempOrder = await TempOrder.findOne({ txnid }).populate('items.productId');
 
             if (!tempOrder) {
-                return res.status(400).render('payment-error', {
-                    message: "Order details not found."
+                return res.status(400).render('failure', {
+                    message: "Order details not found. Please contact support with your transaction ID: " + txnid
                 });
             }
 
-            // Transform items to match Order schema
-            const orderItems = tempOrder.items.map(item => ({
-                product: item.productId || item.product, // Handle both cases
-                title: item.title || item.productId?.title,
-                image: item.image || item.productId?.images?.[0],
-                selectedMeasurement: item.selectedMeasurement || null,
-                selectedColor: item.selectedColor || null,
-                quantity: item.quantity,
-                price: item.price || 
-                      item.selectedMeasurement?.offerPrice || 
-                      item.selectedMeasurement?.price || 
-                      item.selectedColor?.offerPrice || 
-                      item.selectedColor?.price || 
-                      0,
-                priceSource: item.priceSource || 'base'
-            }));
+            const orderItems = tempOrder.items.map(item => {
+                const product = item.productId || {};
+                
+                return {
+                    product: product._id || item.product,
+                    title: product.title || item.title || 'Product',
+                    image: product.images?.[0] || item.image || '/img/product/default.png',
+                    selectedMeasurement: item.selectedMeasurement || null,
+                    selectedColor: item.selectedColor || null,
+                    quantity: item.quantity,
+                    price: item.price || 
+                          item.selectedMeasurement?.offerPrice || 
+                          item.selectedMeasurement?.price || 
+                          item.selectedColor?.offerPrice || 
+                          item.selectedColor?.price || 
+                          product.baseOfferPrice || 
+                          product.basePrice || 
+                          0,
+                    priceSource: item.priceSource || 'base'
+                };
+            });
 
             const order = new Order({
                 user: tempOrder.userId,
@@ -111,22 +116,21 @@ router.post("/payu/success", async (req, res) => {
                 TempOrder.deleteOne({ txnid })
             ]);
 
-            // Successful response
-            return res.render("payment-success", {
+            return res.render("success", {
                 title: "Order Confirmation",
                 order,
                 transactionId: mihpayid
             });
 
         } else {
-            return res.status(400).render('payment-error', {
-                message: "Payment failed. Order not placed."
+            return res.status(400).render('failure', {
+                message: "Payment failed. Please try again or contact support."
             });
         }
     } catch (error) {
-        console.error("Error in /payu/success:", error);
-        return res.status(500).render('payment-error', {
-            message: "An error occurred while processing your payment."
+        console.error("Payment processing error:", error);
+        return res.status(500).render('failure', {
+            message: "An unexpected error occurred. Our team has been notified. Please contact support with transaction ID: " + (req.body.txnid || 'N/A')
         });
     }
 });
