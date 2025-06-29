@@ -1,18 +1,22 @@
 const path = require("path");
 const ejs = require("ejs");
-const pdf = require("html-pdf");
 const nodemailer = require("nodemailer");
-const { promisify } = require("util");
+const puppeteer = require("puppeteer");
 
 const sendInvoiceEmail = async (order, userEmail, userName) => {
   try {
-    const templatePath = path.join(__dirname, "../../views/invoice.ejs");
+    const templatePath = path.join(process.cwd(), "views/invoice.ejs");
     const html = await ejs.renderFile(templatePath, { order, userName });
 
-    // Convert pdf.create().toBuffer to a Promise
-    const toBuffer = promisify(pdf.create(html).toBuffer).bind(pdf.create(html));
-    const buffer = await toBuffer();
+    // Launch headless Chrome
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
 
+    const pdfBuffer = await page.pdf({ format: "A4" });
+    await browser.close();
+
+    // Email setup
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -24,12 +28,12 @@ const sendInvoiceEmail = async (order, userEmail, userName) => {
     const mailOptions = {
       from: `"Vitis Enterprises" <${process.env.EMAIL_USER}>`,
       to: userEmail,
-      subject: `Your Vitis Enterprises Order #${order._id.toString().slice(-8).toUpperCase()}`,
-      text: "Thank you for your order. Please find your invoice attached.",
+      subject: `Your Vitis Order #${order._id.toString().slice(-8).toUpperCase()}`,
+      text: "Thanks for your order! Please find your invoice attached.",
       attachments: [
         {
           filename: `Invoice-${order._id}.pdf`,
-          content: buffer,
+          content: pdfBuffer,
         },
       ],
     };
@@ -40,6 +44,7 @@ const sendInvoiceEmail = async (order, userEmail, userName) => {
     console.error("Error sending invoice email:", err);
   }
 };
+
 
 
 module.exports = sendInvoiceEmail;
