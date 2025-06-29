@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
         }
 
         try {
-            productsMedical = await Product.find({ toggled: true, category: "Medical" });
+            productsMedical = await Product.find({ toggled: true, category: "Healthcare" });
         } catch (err) {
             console.error("Error fetching Medical products:", err);
         }
@@ -146,7 +146,7 @@ router.get('/shop', async (req, res) => {
         const category = req.query.category;
 
         let filter = { toggled: true };
-        if (category && (category === "General" || category === "Medical")) {
+        if (category && (category === "General" || category === "Healthcare")) {
             filter.category = category;
         }
 
@@ -180,7 +180,7 @@ router.get('/shop', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
-        const categories = ["General", "Medical"];
+        const categories = ["General", "Healthcare"];
 
         res.render('shop', { 
             title: 'Shop page', 
@@ -206,7 +206,7 @@ router.get('/shop', async (req, res) => {
             totalProducts: 0,
             sort: '',
             selectedCategory: '',
-            categories: ["General", "Medical"]
+            categories: ["General", "Healthcare"]
         });
     }
 });

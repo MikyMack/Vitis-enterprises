@@ -19866,3 +19866,163 @@ input[type=checkbox]:checked:disabled + label:before {
   }
 }
 
+.floating-buttons {
+  position: fixed;
+  left: 0px;
+  bottom: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 10;
+}
+
+/* Button styling */
+.floating-buttons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 0px 50px 50px 0px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #7ed956 !important;
+}
+
+/* Individual button colors */
+.email-btn {
+  background-color: #7ed956;
+}
+
+.whatsapp-btn {
+  background-color: #7ed956;
+}
+
+.phone-btn {
+  background-color: #7ed956;
+}
+
+/* Enquiry button */
+.enquiry-btn {
+  position: fixed;
+  right: 0;
+  top: 30%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: right bottom;
+  background-color: #7ed956;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+/* Hover effects */
+.floating-buttons a:hover, .enquiry-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+.mb_navbar_container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+  border-top: 1px solid #f0f0f0;
+  z-index: 1000;
+}
+
+.mb_navbar_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 25%;
+  color: #555;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 8px 0;
+  transition: all 0.2s ease;
+}
+
+.mb_navbar_icon_wrapper {
+  position: relative;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-top: 5px;
+}
+
+.mb_navbar_item:hover .mb_navbar_icon_wrapper,
+.mb_navbar_item.mb_navbar_active .mb_navbar_icon_wrapper {
+  background-color: #639f74;
+}
+
+.mb_navbar_item:hover .mb_navbar_icon,
+.mb_navbar_item.mb_navbar_active .mb_navbar_icon {
+  color: white;
+}
+
+.mb_navbar_item:hover .mb_navbar_label,
+.mb_navbar_item.mb_navbar_active .mb_navbar_label {
+  color: #000;
+}
+
+.mb_navbar_icon {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  transition: all 0.2s ease;
+}
+
+.mb_navbar_cart_count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: pink;
+  color: #333;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 1.5px solid white;
+}
+
+.mb_navbar_label {
+  margin-top: 3px;
+  transition: all 0.2s ease;
+}
+
+/* Hide on larger screens */
+@media screen and (min-width: 768px) {
+  .mb_navbar_container {
+    display: none;
+  }
+
+
+}

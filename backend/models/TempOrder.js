@@ -68,21 +68,18 @@ const tempOrderSchema = new mongoose.Schema({
     createdAt: { 
         type: Date, 
         default: Date.now, 
-        expires: 1800 // Auto-delete after 30 minutes
+        expires: 1800 
     }
 }, {
-    // Enable strict validation for all fields
     strict: 'throw'
 });
 
-// Add pre-save validation
 tempOrderSchema.pre('save', function(next) {
-    // Ensure totalAmount is a valid number
+
     if (isNaN(this.totalAmount) || !isFinite(this.totalAmount)) {
         throw new Error('Total amount must be a valid number');
     }
     
-    // Calculate totalAmount from items if not provided
     if (!this.totalAmount && this.items) {
         this.totalAmount = this.items.reduce((total, item) => {
             const price = item.selectedMeasurement?.offerPrice || 

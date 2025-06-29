@@ -10,19 +10,19 @@ const testimonialSchema = new mongoose.Schema({
         type: Number,
         required: true,
         min: 1,
-        max: 5, // Restricting stars to a range of 1 to 5
+        max: 5, 
     },
     description: {
         type: String,
         required: true,
     },
     profilePic: {
-        type: String, // Path or URL to the profile picture
+        type: String, 
         required: true,
     },
     toggled: {
         type: Boolean,
-        default: true, // To enable/disable displaying a testimonial
+        default: true, 
     },
 }, { timestamps: true });
 

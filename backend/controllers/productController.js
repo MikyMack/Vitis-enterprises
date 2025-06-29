@@ -147,7 +147,7 @@ exports.listProducts = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({}, '_id'); // Fetch only product IDs
+        const products = await Product.find({}, '_id');
         res.json({ success: true, products });
     } catch (error) {
         console.error("Error fetching products:", error);

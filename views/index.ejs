@@ -235,14 +235,15 @@
                                 </div>
                                 <div class="ltn__category-menu-toggle ltn__one-line-active">
                                     <ul>
-                                        <!-- Submenu Column - unlimited -->
-                                        <li class="ltn__category-menu-item ltn__category-menu-drop">
-                                            <a href="/shop"><i class="fa fa-hospital"></i> General</a>
-                                        </li>
-                                        <!-- Submenu Column - 4 -->
-                                        <li class="ltn__category-menu-item ltn__category-menu-drop">
-                                            <a href="/shop"><i class="fa fa-notes-medical"></i> Medical</a>
 
+                                        <li class="ltn__category-menu-item ltn__category-menu-drop">
+                                            <a href="/shop?category=General&page=1"><i class="fa fa-hospital"></i>
+                                                General</a>
+                                        </li>
+
+                                        <li class="ltn__category-menu-item ltn__category-menu-drop">
+                                            <a href="/shop?category=Healthcare&page=1"><i
+                                                    class="fa fa-notes-medical"></i> Health Care</a>
                                         </li>
 
                                     </ul>
@@ -623,7 +624,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-title-area ltn__section-title-2 text-center">
-                            <h1 class="section-title">Medical Products</h1>
+                            <h1 class="section-title">Health Care Products</h1>
                         </div>
                     </div>
                 </div>
@@ -683,7 +684,8 @@
                                             <div class="ltn__product-item ltn__product-item-2 text-left">
                                                 <div class="product-img">
                                                     <a href="/product/<%= product._id %>">
-                                                        <img class="Allproduct-image" src="<%= imgSrc %>" alt="<%= product.title %>">
+                                                        <img class="Allproduct-image" src="<%= imgSrc %>"
+                                                            alt="<%= product.title %>">
                                                     </a>
                                                     <% if (product.toggled) { %>
                                                         <div class="product-badge">
@@ -822,7 +824,7 @@
                                         <% }); %>
                                             <% } else { %>
                                                 <div class="col-12">
-                                                    <p>No medical products found.</p>
+                                                    <p>No healthcare products found.</p>
                                                 </div>
                                                 <% } %>
                         </div>
@@ -890,7 +892,8 @@
                                     <div class="ltn__product-item ltn__product-item-2 text-left">
                                         <div class="product-img">
                                             <a href="/product/<%= product._id %>">
-                                                <img class="Allproduct-image" src="<%= imgSrc %>" alt="<%= product.title %>">
+                                                <img class="Allproduct-image" src="<%= imgSrc %>"
+                                                    alt="<%= product.title %>">
                                             </a>
                                             <% if (product.toggled) { %>
                                                 <div class="product-badge">
@@ -1024,7 +1027,7 @@
                                         <% } %>
                 </div>
             </div>
-          
+
         </div>
     </div>
     <!-- PRODUCT AREA END -->
@@ -1036,21 +1039,21 @@
                 <div class="col-lg-4 col-sm-6">
                     <div class="ltn__banner-item">
                         <div class="ltn__banner-img">
-                            <a href="/shop"><img src="img/banner/23.jpg" alt="Banner Image"></a>
+                            <a href="/shop"><img src="img/bg/banner1.jpg" alt="Banner Image"></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6">
                     <div class="ltn__banner-item">
                         <div class="ltn__banner-img">
-                            <a href="/shop"><img src="img/banner/21.jpg" alt="Banner Image"></a>
+                            <a href="/shop"><img src="img/bg/banner2.jpg" alt="Banner Image"></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6">
                     <div class="ltn__banner-item">
                         <div class="ltn__banner-img">
-                            <a href="/shop"><img src="img/banner/23.jpg" alt="Banner Image"></a>
+                            <a href="/shop"><img src="img/bg/banner3.jpg" alt="Banner Image"></a>
                         </div>
                     </div>
                 </div>
@@ -1070,65 +1073,65 @@
                 </div>
             </div>
             <div class="row ltn__tab-product-slider-one-active--- slick-arrow-1">
-                <% allProducts.forEach(function(product) { 
-                    var mainImage = (product.images && product.images.length > 0) ? product.images[0] : 'img/product-2/1.png';
+                <% allProducts.forEach(function(product) { var mainImage=(product.images && product.images.length> 0) ?
+                    product.images[0] : 'img/product-2/1.png';
                     var basePrice = typeof product.basePrice === 'number' ? product.basePrice : 0;
                     var baseOffer = typeof product.baseOfferPrice === 'number' ? product.baseOfferPrice : 0;
-                    var isOutOfStock = (typeof product.baseStocks === 'number' ? product.baseStocks : 0) <= 0; 
-                %>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
-                    <div class="ltn__product-item ltn__product-item-2 text-left" data-product-id="<%= product._id %>">
-                        <div class="product-img">
-                            <a href="/product/<%= product._id %>">
-                                <img src="<%= mainImage %>" alt="<%= product.title %>">
-                            </a>
-                            <% if (product.baseOfferPrice && product.baseOfferPrice > 0) { %>
-                                <div class="product-badge">
-                                    <ul>
-                                        <li class="sale-badge">Offer</li>
-                                    </ul>
+                    var isOutOfStock = (typeof product.baseStocks === 'number' ? product.baseStocks : 0) <= 0; %>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                            <div class="ltn__product-item ltn__product-item-2 text-left"
+                                data-product-id="<%= product._id %>">
+                                <div class="product-img">
+                                    <a href="/product/<%= product._id %>">
+                                        <img src="<%= mainImage %>" alt="<%= product.title %>">
+                                    </a>
+                                    <% if (product.baseOfferPrice && product.baseOfferPrice> 0) { %>
+                                        <div class="product-badge">
+                                            <ul>
+                                                <li class="sale-badge">Offer</li>
+                                            </ul>
+                                        </div>
+                                        <% } %>
+                                            <% if (isOutOfStock) { %>
+                                                <div class="product-badge">
+                                                    <ul>
+                                                        <li class="sold-out-badge">Out of Stock</li>
+                                                    </ul>
+                                                </div>
+                                                <% } %>
                                 </div>
-                            <% } %>
-                            <% if (isOutOfStock) { %>
-                                <div class="product-badge">
-                                    <ul>
-                                        <li class="sold-out-badge">Out of Stock</li>
-                                    </ul>
+                                <div class="product-info">
+                                    <h2 class="product-title">
+                                        <a href="/product/<%= product._id %>">
+                                            <%= product.title %>
+                                        </a>
+                                    </h2>
+                                    <div class="product-price" id="product-price-<%= product._id %>">
+                                        <b>₹</b>
+                                        <span class="main-price">
+                                            <%= (baseOffer> 0 && baseOffer < basePrice) ?
+                                                    baseOffer.toLocaleString('en-IN', {minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2}) : basePrice.toLocaleString('en-IN',
+                                                    {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
+                                        </span>
+                                        <% if (baseOffer> 0 && baseOffer < basePrice) { %>
+                                                <del><b>₹</b>
+                                                    <%= basePrice.toLocaleString('en-IN', {minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2}) %>
+                                                </del>
+                                                <% } %>
+                                    </div>
+                                    <button id="addToCart_<%= product._id %>" class="btn-theme btn-add-to-cart"
+                                        title="Add to Cart" data-product-id="<%= product._id %>" <%=isOutOfStock
+                                        ? 'disabled style="opacity: 0.5;"' : '' %>>
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                    </button>
+                                    <div class="add-to-cart-feedback" id="cart-feedback-<%= product._id %>"
+                                        style="display:none;margin-top:5px;"></div>
                                 </div>
-                            <% } %>
-                        </div>
-                        <div class="product-info">
-                            <h2 class="product-title">
-                                <a href="/product/<%= product._id %>">
-                                    <%= product.title %>
-                                </a>
-                            </h2>
-                            <div class="product-price" id="product-price-<%= product._id %>">
-                                <b>₹</b>
-                                <span class="main-price">
-                                    <%= (baseOffer > 0 && baseOffer < basePrice) ? 
-                                        baseOffer.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : 
-                                        basePrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
-                                </span>
-                                <% if (baseOffer > 0 && baseOffer < basePrice) { %>
-                                    <del><b>₹</b>
-                                        <%= basePrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) %>
-                                    </del>
-                                <% } %>
                             </div>
-                            <button id="addToCart_<%= product._id %>"
-                                class="btn-theme btn-add-to-cart" 
-                                title="Add to Cart"
-                                data-product-id="<%= product._id %>" 
-                                <%= isOutOfStock ? 'disabled style="opacity: 0.5;"' : '' %>>
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
-                            <div class="add-to-cart-feedback" id="cart-feedback-<%= product._id %>"
-                                style="display:none;margin-top:5px;"></div>
                         </div>
-                    </div>
-                </div>
-                <% }); %>
+                        <% }); %>
             </div>
 
             <script>
@@ -1136,8 +1139,8 @@
                 const cart = {
                     async addItem(productId, quantity = 1) {
                         try {
-                            const productElement = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.ltn__product-item') || 
-                                                 document.querySelector(`#addToCart_${productId}`)?.closest('.ltn__product-item');
+                            const productElement = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.ltn__product-item') ||
+                                document.querySelector(`#addToCart_${productId}`)?.closest('.ltn__product-item');
                             if (!productElement) {
                                 console.error('Product element not found for ID:', productId);
                                 this.showError('Product not found. Please refresh the page and try again.', null);
@@ -1272,18 +1275,18 @@
                 }
 
                 // Initialize on DOM load
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     // Initialize cart count
                     <% if (typeof user !== "undefined" && user && typeof user.cartCount !== "undefined") { %>
                         cart.updateCartCount(<%= user.cartCount %>);
                     <% } else { %>
                         cart.updateCartCount(cart.getGuestCart().length);
                     <% } %>
-                    // Attach event listeners to all add-to-cart buttons
-                    document.querySelectorAll('button.btn-add-to-cart').forEach(button => {
-                        button.removeEventListener('click', handleAddToCart); // Prevent duplicates
-                        button.addEventListener('click', handleAddToCart);
-                    });
+                        // Attach event listeners to all add-to-cart buttons
+                        document.querySelectorAll('button.btn-add-to-cart').forEach(button => {
+                            button.removeEventListener('click', handleAddToCart); // Prevent duplicates
+                            button.addEventListener('click', handleAddToCart);
+                        });
                 });
             </script>
 
@@ -1568,6 +1571,118 @@
     </footer>
     <!-- FOOTER AREA END -->
 
+    <div class="floating-buttons">
+        <a href="mailto:vitisenterprises@gmail.com" class="email-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
+                <path d="M3 6l9 6 9-6" />
+            </svg>
+        </a>
+        <a href="https://wa.me/+917736921309" class="whatsapp-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M12 2C6.5 2 2 6.5 2 12c0 1.8 0.5 3.5 1.3 5L2 22l5.1-1.3c1.5 0.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"
+                    fill="none" stroke="currentColor" />
+                <path
+                    d="M17 15.5c-0.2 0.7-1.2 1.2-1.7 1.3-0.4 0.1-1 0.1-1.6-0.1-0.4-0.1-0.8-0.3-1.4-0.5-2.6-1.1-4.2-3.6-4.4-3.8-0.1-0.2-1-1.4-1-2.6 0-1.3 0.7-1.9 0.9-2.1 0.2-0.2 0.5-0.3 0.7-0.3 0.2 0 0.3 0 0.5 0 0.2 0 0.4-0.1 0.6 0.4 0.2 0.5 0.7 1.7 0.8 1.8 0.1 0.1 0.1 0.3 0 0.4-0.1 0.2-0.1 0.2-0.2 0.4-0.1 0.1-0.3 0.3-0.4 0.4-0.1 0.1-0.2 0.3-0.1 0.5 0.1 0.2 0.5 0.8 1.1 1.3 0.7 0.7 1.4 0.9 1.6 1 0.2 0.1 0.4 0.1 0.5-0.1 0.2-0.1 0.7-0.8 0.8-1 0.2-0.3 0.3-0.2 0.6-0.1 0.2 0.1 1.5 0.7 1.8 0.8 0.3 0.1 0.4 0.2 0.5 0.3 0.1 0.1 0.1 0.7-0.2 1.3z"
+                    fill="currentColor" stroke="none" />
+            </svg>
+
+        </a>
+        <a href="tel:+917736921309" class="phone-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M22 16.92V19a2 2 0 0 1-2 2 17.9 17.9 0 0 1-8-2 17.9 17.9 0 0 1-8-8 17.9 17.9 0 0 1-2-8A2 2 0 0 1 5 1h2.08a2 2 0 0 1 2 .72l2.83 3.42a2 2 0 0 1-.25 2.77L9.91 10.08a16 16 0 0 0 4 4l2.17-1.75a2 2 0 0 1 2.77-.25l3.42 2.83a2 2 0 0 1 .72 2z" />
+            </svg>
+        </a>
+    </div>
+    <!-- Mobile Bottom Navbar -->
+    <nav class="mb_navbar_container">
+        <a href="/" class="mb_navbar_item mb_navbar_active">
+            <div class="mb_navbar_icon_wrapper">
+                <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            <span class="mb_navbar_label">Home</span>
+        </a>
+
+        <a href="/shop" class="mb_navbar_item">
+            <div class="mb_navbar_icon_wrapper">
+                <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                    <line x1="2" y1="8" x2="22" y2="8"></line>
+                    <line x1="12" y1="8" x2="12" y2="21"></line>
+                    <line x1="7" y1="14.5" x2="7" y2="14.51"></line>
+                    <line x1="17" y1="14.5" x2="17" y2="14.51"></line>
+                </svg>
+            </div>
+            <span class="mb_navbar_label">Shop</span>
+        </a>
+        <a href="/cart" class="mb_navbar_item">
+            <div class="mb_navbar_icon_wrapper">
+                <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+
+            </div>
+            <span class="mb_navbar_label">Cart</span>
+        </a>
+        <% if (user) { %>
+            <a href="/orders" class="mb_navbar_item">
+                <div class="mb_navbar_icon_wrapper">
+                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                        <path d="M9 14h6" />
+                        <path d="M6 10h12" />
+                        <path d="M3 6h18" />
+                    </svg>
+                </div>
+                <span class="mb_navbar_label">Orders</span>
+            </a>     
+            <% } else { %>
+                <a href="/contact" class="mb_navbar_item">
+                    <div class="mb_navbar_icon_wrapper">
+                        <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M21 10.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4.5" />
+                            <polyline points="17 8 21 12 17 16" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </div>
+                    <span class="mb_navbar_label">Contact</span>
+                </a>
+                <% } %>
+
+
+
+                    <% if (user) { %>
+                        <a href="/api/auth/user-logout" class="mb_navbar_item">
+                            <div class="mb_navbar_icon_wrapper">
+                                <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <span class="mb_navbar_label">Logout</span>
+                        </a>
+                        <% } else { %>
+                            <a href="/user-login" class="mb_navbar_item">
+                                <div class="mb_navbar_icon_wrapper">
+                                    <svg class="mb_navbar_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <span class="mb_navbar_label">Login</span>
+                            </a>
+                            <% } %>
+    </nav>
 
     </div>
     <!-- Body main wrapper end -->
