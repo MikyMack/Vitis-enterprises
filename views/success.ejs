@@ -20,6 +20,8 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
         }
         .success-icon {
             font-size: 48px;
@@ -35,6 +37,35 @@
             color: #555;
             margin-top: 20px;
         }
+        .order-summary-table {
+            margin: 20px auto 0 auto;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 500px;
+        }
+        .order-summary-table th, .order-summary-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .order-summary-table th {
+            background-color: #f8f8f8;
+        }
+        .address-block {
+            margin: 20px auto 0 auto;
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 16px 20px;
+            max-width: 400px;
+            text-align: left;
+            font-size: 16px;
+            color: #444;
+        }
+        .address-block strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #222;
+        }
         .btn {
             display: inline-block;
             margin-top: 20px;
@@ -48,18 +79,108 @@
         .btn:hover {
             background-color: #45a049;
         }
+        .btn + .btn {
+            margin-left: 10px;
+        }
+        .thank-you {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #222;
+            font-weight: 500;
+        }
+        .order-status {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #1976d2;
+        }
+        .notes-block {
+            margin: 18px auto 0 auto;
+            max-width: 400px;
+            font-size: 15px;
+            color: #666;
+            background: #f1f1f1;
+            border-radius: 5px;
+            padding: 10px 15px;
+        }
     </style>
 </head>
 <body>
     <div class="success-container">
         <div class="success-icon">✔️</div>
         <div class="success-message">Payment Successful!</div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+           
+            <dotlottie-player 
+                src="https://lottie.host/0b39922b-c0ce-44a0-85e6-52aa7a40829d/StODObIElN.lottie" 
+                background="transparent" 
+                speed="1" 
+                style="width: 300px; height: 300px;" 
+                loop 
+                autoplay>
+            </dotlottie-player>
+        </div>
         <div class="order-details">
             <p>Your order has been placed successfully.</p>
-            <p>Transaction ID: <%= txnid %></p>
-            <p>Order ID: <%= order._id %></p>
+            <% if (transactionId) { %>
+                <p>Transaction ID: <%= transactionId %></p>
+            <% } %>
+            <% if (order && order._id) { %>
+                <p>Order ID: <%= order._id %></p>
+            <% } %>
+            <% if (order && order.totalAmount) { %>
+                <p>Total Amount: ₹<%= order.totalAmount.toFixed(2) %></p>
+            <% } %>
+            <% if (order && order.status) { %>
+                <div class="order-status">
+                    Status: <strong><%= order.status %></strong>
+                </div>
+            <% } %>
+            <% if (order && order.items && order.items.length > 0) { %>
+                <table class="order-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(function(item) { %>
+                            <tr>
+                                <td>
+                                    <% if (item.image) { %>
+                                        <img src="<%= item.image %>" alt="Product" style="width:32px;height:32px;vertical-align:middle;margin-right:8px;border-radius:4px;">
+                                    <% } %>
+                                    <%= item.title %>
+                                </td>
+                                <td><%= item.quantity %></td>
+                                <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+            <% if (order && order.deliveryAddress) { %>
+                <div class="address-block">
+                    <strong>Delivery Address</strong>
+                    <%= order.deliveryAddress.fullName %><br>
+                    <%= order.deliveryAddress.address %><br>
+                    <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %> <%= order.deliveryAddress.zipCode %><br>
+                    <%= order.deliveryAddress.country %><br>
+                    Phone: <%= order.deliveryAddress.phone %><br>
+                    Email: <%= order.deliveryAddress.email %>
+                </div>
+            <% } %>
+            <% if (order && order.orderNotes) { %>
+                <div class="notes-block">
+                    <strong>Order Notes:</strong> <%= order.orderNotes %>
+                </div>
+            <% } %>
         </div>
+        <div class="thank-you">Thank you for shopping with us!</div>
         <a href="/" class="btn">Continue Shopping</a>
+        <a href="/orders" class="btn">View Your Orders</a>
     </div>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 </body>
 </html>

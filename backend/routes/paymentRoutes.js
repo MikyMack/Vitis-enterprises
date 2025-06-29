@@ -3,7 +3,9 @@ const crypto = require("crypto");
 const axios = require("axios");
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
-const TempOrder = require("../models/TempOrder"); // <-- NEW
+const User = require("../models/User");
+const TempOrder = require("../models/TempOrder"); 
+const sendInvoiceEmail = require("../utils/sendInvoice")
 require("dotenv").config();
 
 const router = express.Router();
@@ -62,34 +64,39 @@ router.post("/payu/success", async (req, res) => {
 
         if (status === "success") {
             const tempOrder = await TempOrder.findOne({ txnid }).populate('items.productId');
-
+            
             if (!tempOrder) {
                 return res.status(400).render('failure', {
                     message: "Order details not found. Please contact support with your transaction ID: " + txnid
                 });
             }
 
-            const orderItems = tempOrder.items.map(item => {
-                const product = item.productId || {};
-                
-                return {
-                    product: product._id || item.product,
-                    title: product.title || item.title || 'Product',
-                    image: product.images?.[0] || item.image || '/img/product/default.png',
-                    selectedMeasurement: item.selectedMeasurement || null,
-                    selectedColor: item.selectedColor || null,
-                    quantity: item.quantity,
-                    price: item.price || 
-                          item.selectedMeasurement?.offerPrice || 
-                          item.selectedMeasurement?.price || 
-                          item.selectedColor?.offerPrice || 
-                          item.selectedColor?.price || 
-                          product.baseOfferPrice || 
-                          product.basePrice || 
-                          0,
-                    priceSource: item.priceSource || 'base'
-                };
-            });
+            // Get user details
+            const user = await User.findById(tempOrder.userId);
+            if (!user) {
+                return res.status(400).render('failure', {
+                    message: "User not found. Please contact support."
+                });
+            }
+
+            // Transform items for Order model
+            const orderItems = tempOrder.items.map(item => ({
+                product: item.productId?._id || item.product,
+                title: item.productId?.title || item.title || 'Product',
+                image: item.productId?.images?.[0] || item.image || '/img/product/default.png',
+                selectedMeasurement: item.selectedMeasurement || null,
+                selectedColor: item.selectedColor || null,
+                quantity: item.quantity,
+                price: item.price || 
+                      item.selectedMeasurement?.offerPrice || 
+                      item.selectedMeasurement?.price || 
+                      item.selectedColor?.offerPrice || 
+                      item.selectedColor?.price || 
+                      item.productId?.baseOfferPrice || 
+                      item.productId?.basePrice || 
+                      0,
+                priceSource: item.priceSource || 'base'
+            }));
 
             const order = new Order({
                 user: tempOrder.userId,
@@ -108,8 +115,14 @@ router.post("/payu/success", async (req, res) => {
                 status: "Processing"
             });
 
-            await order.save();
+            const savedOrder = await order.save();
             
+            try {
+                await sendInvoiceEmail(savedOrder, user.email, user.name);
+            } catch (emailError) {
+                console.error('Failed to send email:', emailError);
+            }
+
             // Cleanup
             await Promise.all([
                 Cart.deleteOne({ userId: tempOrder.userId }),
@@ -118,8 +131,9 @@ router.post("/payu/success", async (req, res) => {
 
             return res.render("success", {
                 title: "Order Confirmation",
-                order,
-                transactionId: mihpayid
+                order: savedOrder,
+                txnid: mihpayid,  
+                transactionId: mihpayid 
             });
 
         } else {
@@ -130,7 +144,7 @@ router.post("/payu/success", async (req, res) => {
     } catch (error) {
         console.error("Payment processing error:", error);
         return res.status(500).render('failure', {
-            message: "An unexpected error occurred. Our team has been notified. Please contact support with transaction ID: " + (req.body.txnid || 'N/A')
+            message: "An unexpected error occurred. Our team has been notified."
         });
     }
 });

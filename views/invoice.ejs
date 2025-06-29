@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/images/logo-2.png">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 40px;
+      color: #333;
+      background: #f5f6fa;
+    }
+
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      background: #fff;
+      border: 1px solid #eee;
+      box-shadow: 0 0 15px rgba(0,0,0,0.06);
+    }
+
+    .top-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #639f74;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .company-logo {
+      height: 60px;
+    }
+
+    .company-details {
+      text-align: right;
+    }
+
+    .company-details h2 {
+      margin: 0;
+      color: #639f74;
+    }
+
+    .order-details, .customer-details {
+      margin-bottom: 20px;
+    }
+
+    .order-details p, .customer-details p {
+      margin: 3px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      background: #639f74;
+      color: white;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    table tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    .totals {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .totals p {
+      margin: 4px 0;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="top-section">
+            <img src="https://res.cloudinary.com/dtmqvjrxk/image/upload/v1751200230/logo_pa9yer.png" alt="Vitis Logo" class="company-logo" />
+            <div class="company-details">
+                <h2>VITIS ENTERPRISES</h2>
+                <p>vitisenterprises.com</p>
+                <p>vitisenterprises@gmail.com</p>
+                <p>GST No: 32ABCDE1234F1Z5</p>
+            </div>
+        </div>
+    
+        <div class="order-details">
+            <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+            <p><strong>Invoice #:</strong> <%= order._id.toString().slice(-8).toUpperCase() %></p>
+            <p><strong>Payment Method:</strong> <%= order.payment.method %></p>
+            <p><strong>Transaction ID:</strong> <%= order.payment.transactionId %></p>
+        </div>
+    
+        <div class="customer-details">
+            <h4>Customer Details</h4>
+            <p><strong>Name:</strong> <%= order.deliveryAddress.fullName %></p>
+            <p><strong>Phone:</strong> <%= order.deliveryAddress.phone %></p>
+            <p><strong>Email:</strong> <%= order.deliveryAddress.email %></p>
+    
+            <h4>Billing Address</h4>
+            <p>
+                <%= order.billingAddress.fullName %><br>
+                <%= order.billingAddress.address %><br>
+                <%= order.billingAddress.city %>, <%= order.billingAddress.state %><br>
+                <%= order.billingAddress.zipCode %>, <%= order.billingAddress.country %>
+            </p>
+    
+            <h4>Shipping Address</h4>
+            <p>
+                <%= order.deliveryAddress.fullName %><br>
+                <%= order.deliveryAddress.address %><br>
+                <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %><br>
+                <%= order.deliveryAddress.zipCode %>, <%= order.deliveryAddress.country %>
+            </p>
+        </div>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.items.forEach(item => { %>
+                    <tr>
+                        <td><%= item.title %></td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price.toFixed(2) %></td>
+                        <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    
+        <div class="totals">
+            <p><strong>Total Amount:</strong> ₹<%= order.totalAmount.toFixed(2) %></p>
+        </div>
+    
+        <div class="footer">
+            This is a computer-generated invoice. No signature required.<br>
+            Thank you for shopping with <strong>Vitis Enterprises</strong>!
+        </div>
+    </div>
+</body>
+</html>

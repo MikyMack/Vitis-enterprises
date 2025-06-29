@@ -4,7 +4,7 @@
 <head>
     <!-- Basic Page Needs -->
     <meta charset="utf-8">
-    <title>Maxtron - Admin Testimonials</title>
+    <title>Vitis - Admin Orders</title>
 
     <meta name="author" content="trivlogic.com">
 
@@ -895,31 +895,6 @@
                                             </li> -->
                                         </ul>
                                     </li>
-                                    <!-- <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <svg width="24" height="22" viewBox="0 0 22 18" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M0.5 1.875C0.5 0.839466 1.33947 0 2.375 0H19.625C20.6605 0 21.5 0.839466 21.5 1.875V3.375C21.5 4.29657 20.8351 5.06285 19.9589 5.22035L19.3733 15.1762C19.28 16.7619 17.9669 18 16.3785 18H5.62154C4.03311 18 2.71999 16.7619 2.62671 15.1762L2.04108 5.22035C1.16485 5.06285 0.5 4.29657 0.5 3.375V1.875ZM2.75659 3.75C2.75266 3.74997 2.74873 3.74997 2.74479 3.75H2.375C2.16789 3.75 2 3.58211 2 3.375V1.875C2 1.66789 2.16789 1.5 2.375 1.5H19.625C19.8321 1.5 20 1.66789 20 1.875V3.375C20 3.58211 19.8321 3.75 19.625 3.75H19.2552C19.2513 3.74997 19.2473 3.74997 19.2434 3.75H2.75659ZM3.54541 5.25L4.12412 15.0881C4.17076 15.8809 4.82732 16.5 5.62154 16.5H16.3785C17.1727 16.5 17.8292 15.8809 17.8759 15.0881L18.4546 5.25H3.54541ZM8.24976 8.25C8.24976 7.83579 8.58554 7.5 8.99976 7.5H12.9998C13.414 7.5 13.7498 7.83579 13.7498 8.25C13.7498 8.66421 13.414 9 12.9998 9H8.99976C8.58554 9 8.24976 8.66421 8.24976 8.25Z"
-                                                        fill="#111111" />
-                                                </svg>
-                                            </div>
-                                            <div class="text">Banner Management</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item">
-                                                <a href="/admin-banner" class="">
-                                                    <div class="text">Banners</div>
-                                                </a>
-                                            </li>
-                                            <li class="sub-menu-item">
-                                                <a href="/admin-add-banner" class="">
-                                                    <div class="text">Add Banners</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li> -->
 
                                     <li class="menu-item has-children">
                                         <a href="javascript:void(0);" class="menu-item-button">
@@ -1023,7 +998,7 @@
                                                     <img src="admin-images/avatar/user-1.png" alt="">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-text text-main-dark">Maxtron</span>
+                                                    <span class="body-text text-main-dark">Vitis</span>
                                                     <span class="text-tiny">Admin</span>
                                                 </span>
                                             </span>
@@ -1061,38 +1036,62 @@
                                 <div class="flex items-center flex-wrap justify-between gap20 mb-30">
                                     <h3>Order Management</h3>
                                     <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
-                                        <li><a href="/dashboard"><div style="color: white;" class="text-tiny">Dashboard</div></a></li>
+                                        <li><a href="/dashboard">
+                                                <div style="color: white;" class="text-tiny">Dashboard</div>
+                                            </a></li>
                                         <li><i class="icon-chevron-right"></i></li>
-                                        <li><a href="#"><div style="color: white;" class="text-tiny">Order Management</div></a></li>
+                                        <li><a href="#">
+                                                <div style="color: white;" class="text-tiny">Order Management</div>
+                                            </a></li>
                                         <li><i class="icon-chevron-right"></i></li>
-                                        <li><div class="text-tiny">All Orders</div></li>
+                                        <li>
+                                            <div class="text-tiny">All Orders</div>
+                                        </li>
                                     </ul>
                                 </div>
-                                
+
                                 <!-- Status Filter -->
                                 <div class="filter-section mb-20">
                                     <form action="/admin-orders" method="get">
                                         <select name="status" onchange="this.form.submit()">
-                                            <option value="all" <%= statusFilter === 'all' ? 'selected' : '' %>>All Statuses</option>
-                                            <option value="Pending" <%= statusFilter === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                            <option value="Processing" <%= statusFilter === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                            <option value="Shipped" <%= statusFilter === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                            <option value="Delivered" <%= statusFilter === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                            <option value="Cancelled" <%= statusFilter === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            <option value="all" <%=statusFilter==='all' ? 'selected' : '' %>>All
+                                                Statuses</option>
+                                            <option value="Pending" <%=statusFilter==='Pending' ? 'selected' : '' %>
+                                                >Pending</option>
+                                            <option value="Processing" <%=statusFilter==='Processing' ? 'selected' : ''
+                                                %>>Processing</option>
+                                            <option value="Shipped" <%=statusFilter==='Shipped' ? 'selected' : '' %>
+                                                >Shipped</option>
+                                            <option value="Delivered" <%=statusFilter==='Delivered' ? 'selected' : '' %>
+                                                >Delivered</option>
+                                            <option value="Cancelled" <%=statusFilter==='Cancelled' ? 'selected' : '' %>
+                                                >Cancelled</option>
                                         </select>
                                     </form>
                                 </div>
-                    
+
                                 <!-- Orders Table -->
                                 <div class="wg-box">
                                     <div class="wg-table table-all-orders">
                                         <ul class="table-title flex gap20 mb-14">
-                                            <li><div class="body-title">Order ID</div></li>
-                                            <li><div class="body-title">User</div></li>
-                                            <li><div class="body-title">Total Amount</div></li>
-                                            <li><div class="body-title">Status</div></li>
-                                            <li><div class="body-title">Delivery Date</div></li>
-                                            <li><div class="body-title">Action</div></li>
+                                            <li>
+                                                <div class="body-title">Order ID</div>
+                                            </li>
+                                            <li>
+                                                <div class="body-title">User</div>
+                                            </li>
+                                            <li>
+                                                <div class="body-title">Total Amount</div>
+                                            </li>
+                                            <li>
+                                                <div class="body-title">Status</div>
+                                            </li>
+                                            <li>
+                                                <div class="body-title">Delivery Date</div>
+                                            </li>
+                                            <li>
+                                                <div class="body-title">Action</div>
+                                            </li>
                                         </ul>
                                         <ul class="flex flex-column" id="order-list">
                                             <% orders.forEach(order=> { %>
@@ -1112,65 +1111,78 @@
                                                         </span>
                                                     </div>
                                                     <div class="body-text text-main-dark mt-4">
-                                                        <%= order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Not set' %>
+                                                      <span>
+                                                            <% if (order.estimatedDelivery) { %>
+                                                                <%= new
+                                                                    Date(order.estimatedDelivery).toLocaleDateString('en-US',
+                                                                    { year: 'numeric' , month: 'long' , day: 'numeric'
+                                                                    }) %>
+                                                                    <% } else { %>
+                                                                        Not set
+                                                                        <% } %>
+                                                        </span>
                                                     </div>
                                                     <div class="list-icon-function">
                                                         <div class="item edit">
-                                                            <button class="edit-btn" onclick="openEditModal('<%= order._id %>')">
+                                                            <button class="edit-btn"
+                                                                onclick="openEditModal('<%= order._id %>')">
                                                                 <i class="icon-edit-3"></i>
                                                             </button>
                                                         </div>
-                                                        <div class="item update-status" onclick="updateOrderStatus('<%= order._id %>')">
+                                                        <div class="item update-status"
+                                                            onclick="updateOrderStatus('<%= order._id %>')">
                                                             <div><i class="icon-refresh"></i></div>
                                                         </div>
                                                     </div>
                                                 </li>
-                                            <% }) %>
+                                                <% }) %>
                                         </ul>
                                     </div>
-                                    
+
                                     <!-- Pagination -->
                                     <div class="divider"></div>
                                     <div class="flex items-center justify-between flex-wrap gap10">
                                         <div class="pagination flex items-center justify-between mt-20">
                                             <div class="text-tiny">
-                                                Showing <%= (currentPage-1)*limit+1 %> to 
-                                                <%= Math.min(currentPage*limit, totalOrders) %> of <%= totalOrders %> orders
+                                                Showing <%= (currentPage-1)*limit+1 %> to
+                                                    <%= Math.min(currentPage*limit, totalOrders) %> of <%= totalOrders
+                                                            %> orders
                                             </div>
-                                            
+
                                             <div class="flex gap-10">
-                                                <% if (currentPage > 1) { %>
-                                                    <a href="/admin-orders?page=<%= currentPage-1 %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>" 
-                                                       class="pagination-btn">
+                                                <% if (currentPage> 1) { %>
+                                                    <a href="/admin-orders?page=<%= currentPage-1 %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>"
+                                                        class="pagination-btn">
                                                         Previous
                                                     </a>
-                                                <% } %>
-                                                
-                                                <% for (let i = 1; i <= totalPages; i++) { %>
-                                                    <a href="/admin-orders?page=<%= i %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>"
-                                                       class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
-                                                        <%= i %>
-                                                    </a>
-                                                <% } %>
-                                                
-                                                <% if (currentPage < totalPages) { %>
-                                                    <a href="/admin-orders?page=<%= currentPage+1 %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>" 
-                                                       class="pagination-btn">
-                                                        Next
-                                                    </a>
-                                                <% } %>
+                                                    <% } %>
+
+                                                        <% for (let i=1; i <=totalPages; i++) { %>
+                                                            <a href="/admin-orders?page=<%= i %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>"
+                                                                class="pagination-btn <%= currentPage === i ? 'active' : '' %>">
+                                                                <%= i %>
+                                                            </a>
+                                                            <% } %>
+
+                                                                <% if (currentPage < totalPages) { %>
+                                                                    <a href="/admin-orders?page=<%= currentPage+1 %><%= statusFilter !== 'all' ? `&status=${statusFilter}` : '' %>"
+                                                                        class="pagination-btn">
+                                                                        Next
+                                                                    </a>
+                                                                    <% } %>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2025 <a href="https://trivlogic.com">Trivlogic</a>. Design by Trivlogic All rights reserved</div>
+                            <div class="body-text">Copyright © 2025 <a href="https://trivlogic.com">Trivlogic</a>.
+                                Design by Trivlogic All rights reserved</div>
                         </div>
                     </div>
-                    
+
                     <!-- Edit Order Modal -->
                     <div id="editOrderModal" class="modal">
                         <div class="modal-content">
@@ -1188,7 +1200,7 @@
                                         <div><strong>Total Amount:</strong> <span id="modalAmount">-</span></div>
                                     </div>
                                 </div>
-                    
+
                                 <form id="editOrderForm">
                                     <div class="form-group">
                                         <label class="form-label" for="orderStatus">Order Status</label>
@@ -1200,21 +1212,24 @@
                                             <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </div>
-                    
+
                                     <div class="form-group">
-                                        <label class="form-label" for="deliveryDate">Delivery Date</label>
-                                        <input type="date" class="form-control" id="deliveryDate" name="deliveryDate">
+                                        <label class="form-label" for="estimatedDelivery"> Delivery Date</label>
+                                        <input type="date" class="form-control" id="estimatedDelivery"
+                                            name="estimatedDelivery">
                                     </div>
-                    
+
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                                        <button type="submit" class="btn btn-primary" id="submitBtn">Update Order</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            onclick="closeEditModal()">Cancel</button>
+                                        <button type="submit" class="btn btn-primary" id="submitBtn">Update
+                                            Order</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    
+
                     <style>
                         /* Status Badges */
                         .status-badge {
@@ -1223,12 +1238,32 @@
                             font-size: 12px;
                             font-weight: 500;
                         }
-                        .status-badge.pending { background: #FFF3CD; color: #856404; }
-                        .status-badge.processing { background: #CCE5FF; color: #004085; }
-                        .status-badge.shipped { background: #D4EDDA; color: #155724; }
-                        .status-badge.delivered { background: #D1ECF1; color: #0C5460; }
-                        .status-badge.cancelled { background: #F8D7DA; color: #721C24; }
-                        
+
+                        .status-badge.pending {
+                            background: #FFF3CD;
+                            color: #856404;
+                        }
+
+                        .status-badge.processing {
+                            background: #CCE5FF;
+                            color: #004085;
+                        }
+
+                        .status-badge.shipped {
+                            background: #D4EDDA;
+                            color: #155724;
+                        }
+
+                        .status-badge.delivered {
+                            background: #D1ECF1;
+                            color: #0C5460;
+                        }
+
+                        .status-badge.cancelled {
+                            background: #F8D7DA;
+                            color: #721C24;
+                        }
+
                         /* Modal Styles */
                         .modal {
                             display: none;
@@ -1239,9 +1274,13 @@
                             width: 100%;
                             height: 100%;
                             overflow: auto;
-                            background-color: rgba(0,0,0,0.4);
+                            background-color: rgba(0, 0, 0, 0.4);
                         }
-                        .modal.show { display: block; }
+
+                        .modal.show {
+                            display: block;
+                        }
+
                         .modal-content {
                             background-color: #fefefe;
                             margin: 5% auto;
@@ -1251,6 +1290,7 @@
                             max-width: 700px;
                             border-radius: 8px;
                         }
+
                         .modal-header {
                             display: flex;
                             justify-content: space-between;
@@ -1258,33 +1298,65 @@
                             padding-bottom: 15px;
                             border-bottom: 1px solid #eee;
                         }
+
                         .close {
                             color: #aaa;
                             font-size: 28px;
                             font-weight: bold;
                             cursor: pointer;
                         }
-                        .close:hover { color: black; }
-                        .form-group { margin-bottom: 15px; }
-                        .form-label { display: block; margin-bottom: 5px; font-weight: 500; }
+
+                        .close:hover {
+                            color: black;
+                        }
+
+                        .form-group {
+                            margin-bottom: 15px;
+                        }
+
+                        .form-label {
+                            display: block;
+                            margin-bottom: 5px;
+                            font-weight: 500;
+                        }
+
                         .form-control {
                             width: 100%;
                             padding: 8px 12px;
                             border: 1px solid #ddd;
                             border-radius: 4px;
                         }
-                        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+                        .btn-group {
+                            display: flex;
+                            justify-content: flex-end;
+                            gap: 10px;
+                            margin-top: 20px;
+                        }
+
                         .btn {
                             padding: 8px 16px;
                             border: none;
                             border-radius: 4px;
                             cursor: pointer;
                         }
-                        .btn-secondary { background: #6c757d; color: white; }
-                        .btn-primary { background: #007bff; color: white; }
-                        
+
+                        .btn-secondary {
+                            background: #6c757d;
+                            color: white;
+                        }
+
+                        .btn-primary {
+                            background: #007bff;
+                            color: white;
+                        }
+
                         /* Loading State */
-                        .btn-loading { position: relative; pointer-events: none; }
+                        .btn-loading {
+                            position: relative;
+                            pointer-events: none;
+                        }
+
                         .btn-loading::after {
                             content: "";
                             position: absolute;
@@ -1300,40 +1372,52 @@
                             border-radius: 50%;
                             animation: button-loading-spinner 1s ease infinite;
                         }
+
                         @keyframes button-loading-spinner {
-                            from { transform: rotate(0turn); }
-                            to { transform: rotate(1turn); }
+                            from {
+                                transform: rotate(0turn);
+                            }
+
+                            to {
+                                transform: rotate(1turn);
+                            }
                         }
                     </style>
-                    
+
                     <script>
                         let currentOrder = null;
                         let isLoading = false;
-                    
+
                         // Open modal with order details
                         async function openEditModal(orderId) {
                             if (isLoading) return;
-                            
+
                             try {
                                 isLoading = true;
                                 document.getElementById('editOrderModal').classList.add('loading');
-                                
+
                                 const response = await fetch(`/orders/${orderId}`);
                                 if (!response.ok) throw new Error('Failed to fetch order');
-                                
+
                                 currentOrder = await response.json();
-                                
+
                                 // Populate modal fields
                                 document.getElementById('modalOrderId').textContent = currentOrder._id;
                                 document.getElementById('modalCustomer').textContent = currentOrder.user.name;
                                 document.getElementById('modalOrderDate').textContent = new Date(currentOrder.createdAt).toLocaleDateString();
                                 document.getElementById('modalAmount').textContent = `₹${currentOrder.totalAmount.toFixed(2)}`;
-                                
+
                                 document.getElementById('orderStatus').value = currentOrder.status;
-                                document.getElementById('deliveryDate').value = currentOrder.delivery_date 
-                                    ? new Date(currentOrder.delivery_date).toISOString().split('T')[0] 
-                                    : '';
-                                
+
+                                // Corrected estimated delivery date handling
+                                const estimatedDeliveryElement = document.getElementById('estimatedDelivery');
+                                if (currentOrder.estimatedDelivery) {
+                                    const estimatedDate = new Date(currentOrder.estimatedDelivery);
+                                    estimatedDeliveryElement.value = estimatedDate.toISOString().split('T')[0];
+                                } else {
+                                    estimatedDeliveryElement.value = '';
+                                }
+
                                 // Show modal
                                 document.getElementById('editOrderModal').classList.add('show');
                                 document.body.style.overflow = 'hidden';
@@ -1345,7 +1429,6 @@
                                 document.getElementById('editOrderModal').classList.remove('loading');
                             }
                         }
-                    
                         // Close modal
                         function closeEditModal() {
                             document.getElementById('editOrderModal').classList.remove('show');
@@ -1353,25 +1436,25 @@
                             currentOrder = null;
                             document.getElementById('editOrderForm').reset();
                         }
-                    
+
                         // Quick status update
                         async function updateOrderStatus(orderId) {
                             const newStatus = prompt('Enter new status (Pending, Processing, Shipped, Delivered, Cancelled):');
-                            
+
                             if (!newStatus) return;
                             if (!['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].includes(newStatus)) {
                                 return alert('Invalid status. Please use one of: Pending, Processing, Shipped, Delivered, Cancelled');
                             }
-                            
+
                             try {
                                 const response = await fetch(`/orders/update-status/${orderId}`, {
                                     method: 'PUT',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ status: newStatus })
                                 });
-                                
+
                                 const data = await response.json();
-                                
+
                                 if (data.success) {
                                     location.reload();
                                 } else {
@@ -1382,31 +1465,31 @@
                                 alert('Failed to update status');
                             }
                         }
-                    
+
                         // Handle form submission
-                        document.getElementById('editOrderForm').addEventListener('submit', async function(e) {
+                        document.getElementById('editOrderForm').addEventListener('submit', async function (e) {
                             e.preventDefault();
                             if (!currentOrder || isLoading) return;
-                            
+
                             const submitBtn = document.getElementById('submitBtn');
                             submitBtn.classList.add('btn-loading');
                             submitBtn.disabled = true;
                             isLoading = true;
-                            
+
                             try {
                                 const formData = {
                                     status: document.getElementById('orderStatus').value,
-                                    delivery_date: document.getElementById('deliveryDate').value
+                                    estimatedDelivery: document.getElementById('estimatedDelivery').value
                                 };
-                                
+
                                 const response = await fetch(`/orders/update/${currentOrder._id}`, {
                                     method: 'PUT',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(formData)
                                 });
-                                
+
                                 const data = await response.json();
-                                
+
                                 if (data.success) {
                                     alert('Order updated successfully!');
                                     closeEditModal();
@@ -1423,14 +1506,14 @@
                                 isLoading = false;
                             }
                         });
-                    
+
                         // Close modal when clicking outside
-                        document.getElementById('editOrderModal').addEventListener('click', function(e) {
+                        document.getElementById('editOrderModal').addEventListener('click', function (e) {
                             if (e.target === this) closeEditModal();
                         });
-                    
+
                         // Close modal with ESC key
-                        document.addEventListener('keydown', function(e) {
+                        document.addEventListener('keydown', function (e) {
                             if (e.key === 'Escape' && document.getElementById('editOrderModal').classList.contains('show')) {
                                 closeEditModal();
                             }

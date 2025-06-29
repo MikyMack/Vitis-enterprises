@@ -34,29 +34,27 @@ app.get('/admin-banner', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'Error retrieving banners' });
     }
 });
-// Manage banners (Protected Route)
+
 app.get('/admin-orders', authMiddleware, async (req, res) => {
     try {
-        // Pagination parameters
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10; // Default 10 items per page
-        
-        // Status filter (optional)
-        const { status } = req.query;
-        const filter = {};
-        if (status) filter.status = status;
+        const limit = parseInt(req.query.limit) || 10; 
 
-        // Calculate skip value
+        let { status } = req.query;
+        const filter = {};
+
+        if (status && status !== 'all') {
+            filter.status = status;
+        }
+
         const skip = (page - 1) * limit;
 
-        // Get orders with pagination
         const orders = await Order.find(filter)
             .populate('user', 'name')
-            .sort({ createdAt: -1 }) // Newest first
+            .sort({ createdAt: -1 }) 
             .skip(skip)
             .limit(limit);
 
-        // Count total documents (for pagination info)
         const total = await Order.countDocuments(filter);
 
         res.render('admin-orders', { 
@@ -66,7 +64,7 @@ app.get('/admin-orders', authMiddleware, async (req, res) => {
             totalPages: Math.ceil(total / limit),
             limit,
             totalOrders: total,
-            statusFilter: status || 'all' // Pass current filter status
+            statusFilter: status || 'all' 
         });
         
     } catch (err) {
@@ -109,17 +107,22 @@ app.put('/orders/update-status/:id', authMiddleware, async (req, res) => {
 // Update order details
 app.put('/orders/update/:id', authMiddleware, async (req, res) => {
     try {
-        const { status, delivery_date } = req.body;
-        const updateData = {};
+        const { status, estimatedDelivery } = req.body;
+        const updateData = { 
+            status,
+            updatedAt: Date.now() 
+        };
         
-        if (status) updateData.status = status;
-        if (delivery_date) updateData.delivery_date = new Date(delivery_date);
-
+        if (estimatedDelivery) {
+            updateData.estimatedDelivery = new Date(estimatedDelivery);
+        }
+        
         const order = await Order.findByIdAndUpdate(
             req.params.id,
             updateData,
             { new: true }
         );
+        
         res.json({ success: true, order });
     } catch (err) {
         console.error(err);
