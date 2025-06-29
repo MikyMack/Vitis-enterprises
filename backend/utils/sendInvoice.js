@@ -6,7 +6,7 @@ const { promisify } = require("util");
 
 const sendInvoiceEmail = async (order, userEmail, userName) => {
   try {
-    const templatePath = path.join(__dirname, "../views/invoice.ejs");
+    const templatePath = path.join(__dirname, "../../views/invoice.ejs");
     const html = await ejs.renderFile(templatePath, { order, userName });
 
     // Convert pdf.create().toBuffer to a Promise
