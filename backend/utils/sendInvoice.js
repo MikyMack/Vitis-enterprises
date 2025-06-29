@@ -9,13 +9,14 @@ const sendInvoiceEmail = async (order, userEmail, userName) => {
     const html = await ejs.renderFile(templatePath, { order, userName });
 
     const browser = await puppeteer.launch({
-      executablePath: '/root/.cache/puppeteer/chrome/linux-138.0.7204.49/chrome-linux64/chrome',
+      executablePath: '/usr/bin/chromium-browser',
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
+
     const pdfBuffer = await page.pdf({ format: "A4" });
     await browser.close();
 
