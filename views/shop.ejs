@@ -690,7 +690,6 @@
                         </div>
                     </div>
                     <script>
-                        // --- Fix for List View: Make price update and add to cart work for both grid and list view ---
                         function generateCartItemKey(item) {
                             const color = (item.selectedColor && typeof item.selectedColor.colorName !== "undefined")
                                 ? item.selectedColor.colorName
@@ -701,9 +700,7 @@
                             return `${item.productId}-${color}-${measurement}`;
                         }
 
-                        // Update price for both grid and list view
                         window.updatePriceOnSelect = function(productId) {
-                            // Find all product items (grid and list) for this productId
                             const productItems = document.querySelectorAll('.ltn__product-item [data-product-id="' + productId + '"]');
                             productItems.forEach(function(el) {
                                 let productElement = el.closest('.ltn__product-item');
