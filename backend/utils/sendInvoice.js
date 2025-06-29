@@ -8,15 +8,17 @@ const sendInvoiceEmail = async (order, userEmail, userName) => {
     const templatePath = path.join(process.cwd(), "views/invoice.ejs");
     const html = await ejs.renderFile(templatePath, { order, userName });
 
-    // Launch headless Chrome
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: '/root/.cache/puppeteer/chrome/linux-138.0.7204.49/chrome-linux64/chrome',
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
-
     const pdfBuffer = await page.pdf({ format: "A4" });
     await browser.close();
 
-    // Email setup
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -44,7 +46,5 @@ const sendInvoiceEmail = async (order, userEmail, userName) => {
     console.error("Error sending invoice email:", err);
   }
 };
-
-
 
 module.exports = sendInvoiceEmail;
