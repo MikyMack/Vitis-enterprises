@@ -138,10 +138,9 @@
                             <li>
                                 <!-- mini-cart 2 -->
                                 <div class="mini-cart-icon mini-cart-icon-2">
-                                    <a href="/cart" class="ltn__utilize-toggle">
+                                    <a href="/cart" >
                                         <span class="mini-cart-icon">
                                             <i class="icon-shopping-cart"></i>
-                                            <sup>2</sup>
                                         </span>
                                         <h6><span>Your Cart</span></h6>
                                     </a>
@@ -299,7 +298,7 @@
                         <h1 class="page-title">Contact Us</h1>
                         <div class="ltn__breadcrumb-list">
                             <ul>
-                                <li><a href="index.html"><span class="ltn__secondary-color"><i class="fas fa-home"></i></span> Home</a></li>
+                                <li><a href="/"><span class="ltn__secondary-color"><i class="fas fa-home"></i></span> Home</a></li>
                                 <li>Contact</li>
                             </ul>
                         </div>
@@ -320,8 +319,7 @@
                             <img src="img/icons/10.png" alt="Icon Image">
                         </div>
                         <h3>Email Address</h3>
-                        <p>info@webmail.com <br>
-                            jobs@webexample.com</p>
+                        <a href="mailto:vitisenterprises@gmail.com">vitisenterprises@gmail.com </a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -330,7 +328,7 @@
                             <img src="img/icons/11.png" alt="Icon Image">
                         </div>
                         <h3>Phone Number</h3>
-                        <p>+0123-456789 <br> +987-6543210</p>
+                        <a href="tel:+917736921309">+91 7736921309</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -339,8 +337,8 @@
                             <img src="img/icons/12.png" alt="Icon Image">
                         </div>
                         <h3>Office Address</h3>
-                        <p>18/A, New Born Town Hall <br>
-                            New York, US</p>
+                        <p>Vitis Enterprises, Pathanapuram
+                            Kollam (District), Kerala-689695</p>
                     </div>
                 </div>
             </div>
@@ -355,38 +353,65 @@
                 <div class="col-lg-12">
                     <div class="ltn__form-box contact-form-box box-shadow white-bg">
                         <h4 class="title-2">Get A Quote</h4>
-                        <form id="contact-form" action="https://tunatheme.com/tf/html/vicodin-preview/vicodin/mail.php" method="post">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-item input-item-name ltn__custom-icon">
-                                        <input type="text" name="name" placeholder="Enter your name">
+                        <div class="wpo-contact-form-area">
+                            <form id="whatsapp-contact-form" onsubmit="return sendWhatsAppMessage(event);">
+                                <div>
+                                    <input type="text" class="form-control" name="name" id="name"
+                                        placeholder="Your Name*" required>
+                                </div>
+                                <div>
+                                    <input type="email" class="form-control" name="email" id="email"
+                                        placeholder="Your Email*" required>
+                                </div>
+                                <div>
+                                    <input type="text" class="form-control" name="adress" id="adress"
+                                        placeholder="Address">
+                                </div>
+                                <div>
+                                    <input type="text" class="form-control" name="subject" id="subject"
+                                        placeholder="Subject">
+                                </div>
+                                <div class="fullwidth">
+                                    <textarea class="form-control" name="note" id="note"
+                                        placeholder="Message..." required></textarea>
+                                </div>
+                                <div class="submit-area">
+                                    <button type="submit" class="theme-btn">Get in Touch via WhatsApp</button>
+                                    <div id="loader" style="display:none;">
+                                        <i class="ti-reload"></i>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-item input-item-email ltn__custom-icon">
-                                        <input type="email" name="email" placeholder="Enter email address">
-                                    </div>
+                                <div class="clearfix error-handling-messages">
+                                    <div id="success" style="display:none;">Thank you</div>
+                                    <div id="error" style="display:none;"> Error occurred while opening WhatsApp. Please try again later. </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-item input-item-subject ltn__custom-icon">
-                                        <input type="text" name="subject" placeholder="Enter the subject">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-item input-item-phone ltn__custom-icon">
-                                        <input type="text" name="phone" placeholder="Enter phone number">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-item input-item-textarea ltn__custom-icon">
-                                <textarea name="message" placeholder="Enter message"></textarea>
-                            </div>
-                            <p><label class="input-info-save mb-0"><input type="checkbox" name="agree"> Save my name, email, and website in this browser for the next time I comment.</label></p>
-                            <div class="btn-wrapper mt-0">
-                                <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">get a free service</button>
-                            </div>
-                            <p class="form-messege mb-0 mt-20"></p>
-                        </form>
+                            </form>
+                            <script>
+                                function sendWhatsAppMessage(event) {
+                                    event.preventDefault();
+                                    var name = document.getElementById('name').value.trim();
+                                    var email = document.getElementById('email').value.trim();
+                                    var address = document.getElementById('adress').value.trim();
+                                    var subject = document.getElementById('subject').value.trim();
+                                    var note = document.getElementById('note').value.trim();
+
+                                    var message = "*New Contact Request*%0A";
+                                    if(name) message += "*Name:* " + encodeURIComponent(name) + "%0A";
+                                    if(email) message += "*Email:* " + encodeURIComponent(email) + "%0A";
+                                    if(address) message += "*Address:* " + encodeURIComponent(address) + "%0A";
+                                    if(subject) message += "*Subject:* " + encodeURIComponent(subject) + "%0A";
+                                    if(note) message += "*Message:* " + encodeURIComponent(note) + "%0A";
+
+                                    var phone = "917736921309";
+                                    var url = "https://wa.me/" + phone + "?text=" + message;
+
+                                    window.open(url, '_blank');
+                                    // Optionally show a thank you message
+                                    document.getElementById('success').style.display = 'block';
+                                    return false;
+                                }
+                            </script>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -396,8 +421,9 @@
 
     <!-- GOOGLE MAP AREA START -->
     <div class="google-map mb-120">
+    
        
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9334.271551495209!2d-73.97198251485975!3d40.668170674982946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25b0456b5a2e7%3A0x68bdf865dda0b669!2sBrooklyn%20Botanic%20Garden%20Shop!5e0!3m2!1sen!2sbd!4v1590597267201!5m2!1sen!2sbd" width="100%" height="100%" frameborder="0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+        <iframe src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=Vitis%20Enterprises,%20Pathanapuram%20Kollam%20(District),%20Kerala-689695+(vitis%20enterprises)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" width="100%" height="100%" frameborder="0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
 
     </div>
     <!-- GOOGLE MAP AREA END -->
@@ -409,10 +435,10 @@
                 <div class="col-lg-12">
                     <div class="call-to-action-inner call-to-action-inner-6 ltn__secondary-bg position-relative text-center---">
                         <div class="coll-to-info text-color-white">
-                            <h1>Buy medical disposable face mask <br> to protect your loved ones</h1>
+                            <h4>Vitis is dedicated to offering premium healthcare and general trading products that contribute to overall wellness and a healthier lifestyle. We are committed to supporting health in our communities through reliable, high-quality products, while maintaining a strong focus on sustainability and ethical business practices.</h4>
                         </div>
                         <div class="btn-wrapper">
-                            <a class="btn btn-effect-3 btn-white" href="shop.html">Explore Products <i class="icon-next"></i></a>
+                            <a class="btn btn-effect-3 btn-white" href="/shop">Explore Products <i class="icon-next"></i></a>
                         </div>
                     </div>
                 </div>
@@ -433,20 +459,10 @@
                                     <img style="width: 130px;" src="img/logo.png" alt="Logo">
                                 </div>
                             </div>
-                            <p>Lorem Ipsum is simply dummy text of the and typesetting industry. Lorem Ipsum is dummy text of the printing.</p>
-                            <div class="footer-address">
-                                <ul>
-                                    <li>
-                                        <div class="footer-address-icon">
-                                            <i class="icon-placeholder"></i>
-                                        </div>
-                                        <div class="footer-address-info">
-                                            <p>Brooklyn, New York, United States</p>
-                                        </div>
-                                    </li>   
-                                </ul>
-                            </div>
-                         
+                            <p>Vitis provides customers with high-quality healthcare and general trading products,
+                                offering competitive prices and value-packed combo deals.</p>
+
+
                         </div>
                     </div>
                     <div class="col-xl-2 col-md-6 col-sm-6 col-12">
@@ -489,7 +505,19 @@
                     </div>
                     <div class="col-xl-3 col-md-6 col-sm-12 col-12">
                         <div class="footer-widget footer-newsletter-widget">
-                         
+                            <div class="footer-address">
+                                <ul>
+                                    <li>
+                                        <div class="footer-address-icon">
+                                            <i class="icon-placeholder"></i>
+                                        </div>
+                                        <div class="footer-address-info">
+                                            <p>Vitis Enterprises, Pathanapuram
+                                                Kollam (District), Kerala-689695</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                             <h5 class="mt-30">We Accept</h5>
                             <img src="img/icons/payment-4.png" alt="Payment Image">
                         </div>
@@ -502,10 +530,13 @@
                 <div class="row">
                     <div class="col-md-6 col-12">
                         <div class="ltn__copyright-design clearfix">
-                            <p>All Rights Reserved @ Vitis Enterprises <span class="current-year"></span></p>
+                            <p>
+                                All Rights Reserved @ Vitis Enterprises <span class="current-year"></span> | Developed
+                                by <a href="https://trivlogic.com/" target="_blank" rel="noopener">Trivlogic Pvt Ltd</a>
+                            </p>
                         </div>
                     </div>
-                  
+
                 </div>
             </div>
         </div>
