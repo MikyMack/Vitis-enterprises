@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
         let productsMedical = [];
         let blogs = [];
         let cartCount = 0;
-
+        const search = req.query.search || '';
         if (token) {
             try {
                 const decoded = jwt.verify(token, process.env.SESSION_SECRET);
@@ -56,31 +56,33 @@ router.get('/', async (req, res) => {
         } catch (err) {
             console.error("Error fetching blogs:", err);
         }
-        res.render('index', { 
-            title: 'Home', 
-            user, 
-            productsGeneral, 
-            productsMedical, 
+        res.render('index', {
+            title: 'Home',
+            user,
+            productsGeneral,
+            productsMedical,
             blogs,
             mainBanner,
             bannerTwo,
             bannerThree,
             allProducts,
-            cartCount
-        }); 
+            cartCount,
+            search 
+        });
     } catch (error) {
         const blogs = await Blog.find();
-        res.render('index', { 
-            title: 'Home', 
-            user: null, 
-            productsGeneral: [], 
-            productsMedical: [], 
+        res.render('index', {
+            title: 'Home',
+            user: null,
+            productsGeneral: [],
+            productsMedical: [],
             blogs,
             mainBanner: [],
             bannerTwo: [],
             bannerThree: [],
             allProducts: [],
-            cartCount: 0
+            cartCount: 0,
+            search :''
         });
     }
 });
@@ -128,24 +130,45 @@ router.get('/about', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
-        res.render('about', { title: 'About Us', user });
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
+        res.render('about', { title: 'About Us', user,search });
     } catch (error) {
-        res.status(500).render('about', { title: 'About Us', user: null });
+        res.status(500).render('about', { title: 'About Us', user: null,search:''});
     }
 });
 // About Page
 router.get('/shop', async (req, res) => {
     try {
-        // Pagination
+
         const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
         const perPage = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 12;
         const skip = (page - 1) * perPage;
 
-        // Filters
-        const sort = req.query.sort || ''; 
+        const sort = req.query.sort || '';
         const category = req.query.category;
 
         let filter = { toggled: true };
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
         if (category && (category === "General" || category === "Healthcare")) {
             filter.category = category;
         }
@@ -160,7 +183,7 @@ router.get('/shop', async (req, res) => {
         } else if (sort === 'price-desc') {
             sortObj = { basePrice: -1 };
         } else {
-            sortObj = { _id: -1 }; 
+            sortObj = { _id: -1 };
         }
 
         const totalProducts = await Product.countDocuments(filter);
@@ -182,23 +205,24 @@ router.get('/shop', async (req, res) => {
         }
         const categories = ["General", "Healthcare"];
 
-        res.render('shop', { 
-            title: 'Shop page', 
-            user, 
-            products, 
-            page, 
+        res.render('shop', {
+            title: 'Shop page',
+            user,
+            products,
+            page,
             perPage,
             totalPages: Math.ceil(totalProducts / perPage),
             totalProducts,
             sort,
             selectedCategory: category || '',
-            categories
+            categories,
+            search
         });
     } catch (error) {
         console.error("Shop Page Error:", error);
-        res.status(500).render('shop', { 
-            title: 'Shop page', 
-            user: null, 
+        res.status(500).render('shop', {
+            title: 'Shop page',
+            user: null,
             products: [],
             page: 1,
             perPage: 12,
@@ -206,30 +230,13 @@ router.get('/shop', async (req, res) => {
             totalProducts: 0,
             sort: '',
             selectedCategory: '',
-            categories: ["General", "Healthcare"]
+            categories: ["General", "Healthcare"],
+            search: ''
         });
     }
 });
 
-// Contact Page
-router.get('/services', async (req, res) => {
-    try {
-        const token = req.cookies.token;
-        let user = null;
-        if (token) {
-            try {
-                const decoded = jwt.verify(token, process.env.SESSION_SECRET);
 
-                user = await User.findById(decoded.id);
-            } catch (err) {
-                console.error("JWT Verification Error:", err);
-            }
-        }
-        res.render('services', { title: 'Services', user });
-    } catch (error) {
-        res.status(500).render('services', { title: 'Services', user: null });
-    }
-});
 router.get('/orders', async (req, res) => {
     try {
         const token = req.cookies.token;
@@ -238,7 +245,7 @@ router.get('/orders', async (req, res) => {
         let completedOrders = [];
         let currentOrderProducts = [];
         let completedOrderProducts = [];
-        
+
         if (token) {
             try {
                 const decoded = jwt.verify(token, process.env.SESSION_SECRET);
@@ -247,7 +254,7 @@ router.get('/orders', async (req, res) => {
                 if (user) {
                     currentOrders = await Order.find({ user: user._id, status: { $ne: 'Delivered' } }).populate('items.product');
                     completedOrders = await Order.find({ user: user._id, status: 'Delivered' }).populate('items.product');
-                    
+
                     currentOrderProducts = await Promise.all(currentOrders.map(async order => {
                         return await Promise.all(order.items.map(async item => {
                             const product = await Product.findById(item.product._id);
@@ -266,9 +273,20 @@ router.get('/orders', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
-        res.render('orders', { title: 'orders', user, currentOrders, completedOrders, currentOrderProducts, completedOrderProducts });
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
+        res.render('orders', { title: 'orders', user, currentOrders, completedOrders, currentOrderProducts, completedOrderProducts,search });
     } catch (error) {
-        res.status(500).render('userLogin', { title: 'user Login', user: null });
+        res.status(500).render('userLogin', { title: 'user Login', user: null,search:'' });
     }
 });
 
@@ -285,11 +303,22 @@ router.get('/blogs', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
         const blogs = await Blog.find();
-        res.render('blogs', { title: 'Blogs', user, blogs });
+        res.render('blogs', { title: 'Blogs', user, blogs,search });
     } catch (error) {
         const blogs = await Blog.find();
-        res.status(500).render('blogs', { title: 'Blogs', user: null, blogs });
+        res.status(500).render('blogs', { title: 'Blogs', user: null, blogs,search:'' });
     }
 });
 
@@ -306,17 +335,28 @@ router.get('/blog-details/:id', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
         const blogId = req.params.id;
         const blog = await Blog.findById(blogId);
         if (!blog) {
             return res.status(404).render('404', { title: 'Blog Not Found', user });
         }
-        res.render('blog-details', { title: blog.title, user, blog });
+        res.render('blog-details', { title: blog.title, user, blog,search });
     } catch (error) {
-     
+
         const blogId = req.params.id;
         const blog = await Blog.findById(blogId);
-        res.status(500).render('blog-details', { title: 'Blog Details', user: null, blog });
+        res.status(500).render('blog-details', { title: 'Blog Details', user: null, blog ,search:''});
     }
 });
 
@@ -334,9 +374,20 @@ router.get('/contact', async (req, res) => {
                 console.error("JWT Verification Error:", err);
             }
         }
-        res.render('contact', { title: 'Contact Us', user });
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
+        res.render('contact', { title: 'Contact Us', user,search });
     } catch (error) {
-        res.status(500).render('contact', { title: 'Contact Us', user: null });
+        res.status(500).render('contact', { title: 'Contact Us', user: null,search:'' });
     }
 });
 router.get('/checkout', async (req, res) => {
@@ -360,16 +411,16 @@ router.get('/checkout', async (req, res) => {
                         cartItems = cart.items;
                         totalAmount = cartItems.reduce((total, item) => {
                             // Safely calculate price with fallbacks
-                            const price = item.selectedMeasurement?.offerPrice || 
-                                         item.selectedMeasurement?.price || 
-                                         item.selectedColor?.offerPrice || 
-                                         item.selectedColor?.price || 
-                                         item.productId?.baseOfferPrice || 
-                                         item.productId?.basePrice || 
-                                         0;
+                            const price = item.selectedMeasurement?.offerPrice ||
+                                item.selectedMeasurement?.price ||
+                                item.selectedColor?.offerPrice ||
+                                item.selectedColor?.price ||
+                                item.productId?.baseOfferPrice ||
+                                item.productId?.basePrice ||
+                                0;
                             return total + (price * item.quantity);
-      
-                  }, 0);
+
+                        }, 0);
                     }
                 }
             } catch (err) {
@@ -382,11 +433,23 @@ router.get('/checkout', async (req, res) => {
             console.error("Invalid totalAmount calculation - setting to 0");
             totalAmount = 0;
         }
-        res.render('checkout', { 
-            title: 'Checkout Page', 
-            user, 
-            cartItems, 
-            totalAmount: totalAmount.toFixed(2) 
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
+
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
+        res.render('checkout', {
+            title: 'Checkout Page',
+            user,
+            cartItems,
+            totalAmount: totalAmount.toFixed(2),
+            search
         });
     } catch (error) {
         console.error("Checkout Page Error:", error);
@@ -430,7 +493,17 @@ router.get('/product/:id', async (req, res) => {
         if (!product || !product.toggled) {
             return res.status(404).send('Product not found');
         }
+        const search = req.query.search;
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), 'i');
 
+            filter.$or = [
+                { title: regex },
+                { category: regex },
+                { 'productDescription.point': regex },
+                { 'colorVariants.colorName': regex }
+            ];
+        }
         const category = product.category;
 
         const relatedProducts = await Product.find({
@@ -439,12 +512,13 @@ router.get('/product/:id', async (req, res) => {
             toggled: true
         }).limit(8);
 
-        res.render('product-details', { 
-            title: 'Product Details', 
-            product, 
-            user, 
-            category, 
-            relatedProducts 
+        res.render('product-details', {
+            title: 'Product Details',
+            product,
+            user,
+            category,
+            relatedProducts,
+            search
         });
     } catch (error) {
         try {
@@ -459,12 +533,13 @@ router.get('/product/:id', async (req, res) => {
                     toggled: true
                 }).limit(8);
             }
-            res.render('product-details', { 
-                title: 'Product Details', 
-                product, 
-                user: null, 
-                category, 
-                relatedProducts 
+            res.render('product-details', {
+                title: 'Product Details',
+                product,
+                user: null,
+                category,
+                relatedProducts,
+                search:''
             });
         } catch (err) {
             res.status(500).send('Error loading product details');

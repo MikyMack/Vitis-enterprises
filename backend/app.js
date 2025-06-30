@@ -6,7 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
-const authenticateUser = require('./middleware/auth');
+const {authenticateUser} = require('./middleware/auth');
 const User = require('./models/User');
 const jwt = require('jsonwebtoken');
 // const nodemailer = require("nodemailer");
@@ -65,7 +65,7 @@ app.use(async (req, res) => {
             user = null; 
         }
     }
-    res.status(404).render('errorPage', { title: 'Page Not Found', user });
+    res.status(404).render('errorPage', { title: 'Page Not Found', user,search:'' });
 });
 
 

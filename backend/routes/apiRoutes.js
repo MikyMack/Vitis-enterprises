@@ -13,7 +13,7 @@ const bannerTwoCtrl = require('../controllers/bannerTwoController');
 const bannerThreeCtrl = require('../controllers/bannerThreeController');
 const Notification=require('../models/Notification')
 const nodemailer = require('nodemailer');
-const authenticateUser = require('../middleware/auth');
+const {authenticateUser} = require('../middleware/auth');
 const PDFDocument = require('pdfkit');
 
 

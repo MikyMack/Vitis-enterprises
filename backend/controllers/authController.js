@@ -96,11 +96,78 @@ exports.userLogin = async (req, res) => {
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
-    if (email === 'admin@vitis.com' && password === 'admin@admin') {
-        req.session.user = { email };
-        res.redirect('/dashboard');
-    } else {
-        res.render('admin-login', { title: 'Admin Login', error: 'Invalid email or password' });
+    // Input validation
+    if (!email || !password) {
+        return res.status(400).render('admin-login', {
+            title: 'Admin Login',
+            error: 'Email and password are required'
+        });
+    }
+
+    try {
+        const user = await User.findOne({ email, isAdmin: true });
+        
+        if (!user) {
+            return res.status(401).render('admin-login', { 
+                title: 'Admin Login', 
+                error: 'Invalid credentials'
+            });
+        }
+ 
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).render('admin-login', { 
+                title: 'Admin Login', 
+                error: 'Invalid credentials' 
+            });
+        }
+
+        if (user.blocked) {
+            return res.status(403).render('admin-login', {
+                title: 'Admin Login',
+                error: 'Account disabled. Please contact support.'
+            });
+        }
+
+        req.session.admin = {
+            id: user._id,
+            email: user.email,
+            isAdmin: true,
+            loggedInAt: new Date()
+        };
+
+        const csrfToken = require('crypto').randomBytes(64).toString('hex');
+        res.cookie('XSRF-TOKEN', csrfToken, {
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+
+        // Set last login time
+        user.lastLogin = new Date();
+        await user.save();
+
+        // Successful login
+        req.session.save(err => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).render('admin-login', {
+                    title: 'Admin Login',
+                    error: 'Login failed. Please try again.'
+                });
+            }
+            
+            // Redirect to intended URL or dashboard
+            const redirectTo = req.session.returnTo || '/dashboard';
+            delete req.session.returnTo;
+            res.redirect(redirectTo);
+        });
+
+    } catch (error) {
+        console.error('Admin login error:', error);
+        res.status(500).render('admin-login', { 
+            title: 'Admin Login', 
+            error: 'An unexpected error occurred' 
+        });
     }
 };
 

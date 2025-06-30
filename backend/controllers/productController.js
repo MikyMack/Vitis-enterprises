@@ -528,14 +528,25 @@ exports.displayCart = async (req, res) => {
       }
       isGuest = false;
     }
-    
+    const search = req.query.search;
+    if (search && search.trim()) {
+        const regex = new RegExp(search.trim(), 'i');
+
+        filter.$or = [
+            { title: regex },
+            { category: regex },
+            { 'productDescription.point': regex },
+            { 'colorVariants.colorName': regex }
+        ];
+    }
     res.render("cart", { 
       cartItems, 
       isGuest,
       subtotal: total,
       shipping: 50, 
       vat: 0, 
-      total: total + 50 
+      total: total + 50 ,
+      search
     });
   } catch (error) {
     console.error('Error displaying cart:', error);

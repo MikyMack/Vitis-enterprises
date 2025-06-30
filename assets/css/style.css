@@ -247,15 +247,15 @@ font-family: 'Nunito', sans-serif;
   --ltn__primary-color: #071C1F;
   --ltn__primary-color-2: #041113;
   /* Darken */
-  --ltn__primary-color-3: #639f74;
+  --ltn__primary-color-3: #00476b;
   /* Lighten */
-  --ltn__secondary-color: #639f74;
-  --ltn__secondary-color-2: #cb3421;
+  --ltn__secondary-color:#00476b;
+  --ltn__secondary-color-2: #00476b;
   /* Darken */
-  --ltn__secondary-color-3: #fb412a;
+  --ltn__secondary-color-3: #00476b;
   /* Lighten */
   --ltn__heading-color: #071c1f;
-  --ltn__paragraph-color: #5C727D;
+  --ltn__paragraph-color: #00476b;
   --ltn__heading-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --ltn__body-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
@@ -386,12 +386,13 @@ html {
   -moz-osx-font-smoothing: grayscale;
   /* Firefox */
   -webkit-font-smoothing: antialiased;
+  margin-top: 2px;
   /* WebKit  */
 }
 
 body {
   color: var(--ltn__paragraph-color);
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
   font-size: 16px;
   font-family: var(--ltn__body-font);
@@ -1104,6 +1105,9 @@ button {
   outline: none;
   border: none;
   cursor: pointer;
+  background-color: #00476b;
+  color: white;
+  border-radius: 5px;
 }
 
 button:focus {
@@ -6543,7 +6547,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 .header-search-2 button {
   position: absolute;
   right: 0;
-  background-color: transparent;
+  background-color: #00476b;
   height: 45px;
   top: 0;
   padding: 0 15px;
@@ -9408,7 +9412,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
 
 .ltn__product-item-2 .product-price {
   font-size: 20px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .ltn__product-item-2 .product-price del {
@@ -19889,20 +19893,20 @@ input[type=checkbox]:checked:disabled + label:before {
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #7ed956 !important;
+  background-color: #00476b !important;
 }
 
 /* Individual button colors */
 .email-btn {
-  background-color: #7ed956;
+  background-color: #00476b;
 }
 
 .whatsapp-btn {
-  background-color: #7ed956;
+  background-color: #00476b;
 }
 
 .phone-btn {
-  background-color: #7ed956;
+  background-color: #00476b;
 }
 
 /* Enquiry button */
@@ -19975,7 +19979,7 @@ input[type=checkbox]:checked:disabled + label:before {
 
 .mb_navbar_item:hover .mb_navbar_icon_wrapper,
 .mb_navbar_item.mb_navbar_active .mb_navbar_icon_wrapper {
-  background-color: #639f74;
+  background-color: #00476b;
 }
 
 .mb_navbar_item:hover .mb_navbar_icon,

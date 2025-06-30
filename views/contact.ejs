@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Vitis - Contact</title>
-    <meta name="robots" content="noindex, follow" />
-    <meta name="description" content="">
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="Vitis enterprises Healthcare products | General products">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Place favicon.png in the root directory -->
@@ -65,7 +65,7 @@
     </div>
     <!-- ltn__header-top-area end -->     
     <!-- ltn__header-middle-area start -->
-    <div class="ltn__header-middle-area">
+    <div class="ltn__header-middle-area border-bottom">
         <div class="container">
             <div class="row">
                 <div class="col">
@@ -87,12 +87,71 @@
                         </div>
                         <!-- header-search-2 -->
                         <div class="header-search-2">
-                            <form id="#123" method="get"  action="#">
-                                <input type="text" name="search" value="" placeholder="Search here..."/>
+                            <form method="get" action="/shop">
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    value="<%= search || '' %>" 
+                                    id="typewriter-search"
+                                    placeholder="Search by Products names"
+                                    autocomplete="off"
+                                />
                                 <button type="submit">
                                     <span><i class="icon-search"></i></span>
                                 </button>
                             </form>
+                            <script>
+                                (function() {
+                                    const placeholders = [
+                                        "Search by Products names",
+                                        "General categories",
+                                        "Healthcare categories"
+                                    ];
+                                    let current = 0;
+                                    let charIndex = 0;
+                                    let typing = true;
+                                    const input = document.getElementById('typewriter-search');
+                                    let interval;
+
+                                    function typeWriter() {
+                                        if (!input) return;
+                                        if (typing) {
+                                            if (charIndex < placeholders[current].length) {
+                                                input.setAttribute('placeholder', placeholders[current].substring(0, charIndex + 1));
+                                                charIndex++;
+                                            } else {
+                                                typing = false;
+                                                setTimeout(typeWriter, 1200);
+                                                return;
+                                            }
+                                        } else {
+                                            if (charIndex > 0) {
+                                                input.setAttribute('placeholder', placeholders[current].substring(0, charIndex - 1));
+                                                charIndex--;
+                                            } else {
+                                                typing = true;
+                                                current = (current + 1) % placeholders.length;
+                                            }
+                                        }
+                                        interval = setTimeout(typeWriter, typing ? 70 : 30);
+                                    }
+
+
+                                    if (input && !input.value) {
+                                        typeWriter();
+    
+                                        input.addEventListener('focus', function() {
+                                            clearTimeout(interval);
+                                            input.setAttribute('placeholder', '');
+                                        });
+                                        input.addEventListener('blur', function() {
+                                            charIndex = 0;
+                                            typing = true;
+                                            typeWriter();
+                                        });
+                                    }
+                                })();
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -111,12 +170,12 @@
                                         </div>
                                     </div>
                                     <div class="header-search-1-form">
-                                        <form id="#" method="get"  action="#">
-                                            <input type="text" name="search" value="" placeholder="Search here..."/>
+                                        <form method="get" action="/shop">
+                                            <input type="text" name="search" value="<%= search || '' %>" placeholder="Search here..." />
                                             <button type="submit">
                                                 <span><i class="icon-search"></i></span>
                                             </button>
-                                        </form>
+                                        </form> 
                                     </div>
                                 </div>
                             </li>

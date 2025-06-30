@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-    if (req.session.user) {
-        next();
-    } else {
-        res.redirect('/login'); 
+const adminAuth = (req, res, next) => {
+    if (req.session.admin && req.session.admin.isAdmin) {
+        return next();
     }
+    res.redirect('/login'); 
 };
 
 const authenticateUser = (req, res, next) => {
@@ -25,4 +24,4 @@ const authenticateUser = (req, res, next) => {
     }
 };
 
-module.exports = authenticateUser;
+module.exports = {authenticateUser,adminAuth};
