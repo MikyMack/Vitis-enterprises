@@ -442,46 +442,66 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <% if ((product.colorVariants && product.colorVariants.length > 0) || (product.measurements && product.measurements.length > 0)) { %>
-                                        <div class="mb-2 d-flex align-items-center flex-wrap" style="gap: 18px;">
-                                            <% if (product.colorVariants && product.colorVariants.length > 0) { %>
-                                                <div class="d-flex align-items-center" style="gap: 6px;">
-                                                    <label for="color-variant-select" class="mb-0"><strong>Color:</strong></label>
-                                                    <select id="color-variant-select" class="form-select" 
-                                                        data-type="color" 
-                                                        style="width: 100%; display:inline-block;"
-                                                        onchange="window._lastVariantChanged='color';updatePriceOnSelect('<%= product._id %>')">
-                                                        <option value="">Select Color</option>
-                                                        <% product.colorVariants.forEach(function(variant, idx) { %>
+                                    <% 
+                                    // Check if there are any real color variants (more than just the default option)
+                                    var hasRealColorVariants = Array.isArray(product.colorVariants) && 
+                                                              product.colorVariants.length > 0 && 
+                                                              product.colorVariants.some(v => v.colorName && v.colorName.trim() !== '');
+                                    
+                                    // Check if there are any real measurement variants
+                                    var hasRealMeasurementVariants = Array.isArray(product.measurements) && 
+                                                                    product.measurements.length > 0 && 
+                                                                    product.measurements.some(m => m.measurement && m.measurement.trim() !== '');
+                                    
+                                    // Only show variant section if there are actual variants
+                                    var shouldShowVariants = hasRealColorVariants || hasRealMeasurementVariants;
+                                %>
+                                
+                                <% if (shouldShowVariants) { %>
+                                    <div class="mb-2 d-flex align-items-center flex-wrap" style="gap: 18px;">
+                                        <% if (hasRealColorVariants) { %>
+                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                <label for="color-variant-select" class="mb-0"><strong>Color:</strong></label>
+                                                <select id="color-variant-select" class="form-select" 
+                                                    data-type="color" 
+                                                    style="width: 100%; display:inline-block;"
+                                                    onchange="window._lastVariantChanged='color';updatePriceOnSelect('<%= product._id %>')">
+                                                    <option value="">Select Color</option>
+                                                    <% product.colorVariants.forEach(function(variant, idx) { %>
+                                                        <% if (variant.colorName && variant.colorName.trim() !== '') { %>
                                                             <option value="<%= idx %>" 
                                                                 data-price="<%= variant.price || product.basePrice %>"
                                                                 data-offer="<%= variant.offerPrice || product.baseOfferPrice %>">
                                                                 <%= variant.colorName %>
                                                             </option>
-                                                        <% }) %>
-                                                    </select>
-                                                </div>
-                                            <% } %>
-                                            <% if (product.measurements && product.measurements.length > 0) { %>
-                                                <div class="d-flex align-items-center" style="gap: 6px;">
-                                                    <label for="measurement-variant-select" class="mb-0"><strong>Measurement:</strong></label>
-                                                    <select id="measurement-variant-select" class="form-select" 
-                                                        data-type="measurement"
-                                                        style="width:auto;display:inline-block;"
-                                                        onchange="window._lastVariantChanged='measurement';updatePriceOnSelect('<%= product._id %>')">
-                                                        <option value="">Select One</option>
-                                                        <% product.measurements.forEach(function(measure, idx) { %>
+                                                        <% } %>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <% if (hasRealMeasurementVariants) { %>
+                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                <label for="measurement-variant-select" class="mb-0"><strong>Measurement:</strong></label>
+                                                <select id="measurement-variant-select" class="form-select" 
+                                                    data-type="measurement"
+                                                    style="width:auto;display:inline-block;"
+                                                    onchange="window._lastVariantChanged='measurement';updatePriceOnSelect('<%= product._id %>')">
+                                                    <option value="">Select One</option>
+                                                    <% product.measurements.forEach(function(measure, idx) { %>
+                                                        <% if (measure.measurement && measure.measurement.trim() !== '') { %>
                                                             <option value="<%= idx %>"
                                                                 data-price="<%= measure.price || product.basePrice %>"
                                                                 data-offer="<%= measure.offerPrice || product.baseOfferPrice %>">
                                                                 <%= measure.measurement %>
                                                             </option>
-                                                        <% }) %>
-                                                    </select>
-                                                </div>
-                                            <% } %>
-                                        </div>
-                                    <% } %>
+                                                        <% } %>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% } %>
                                     <div class="ltn__product-details-menu-2">
                                         <ul>
                                             <li>
@@ -524,10 +544,26 @@
                                     <div class="ltn__social-media">
                                         <ul>
                                             <li>Share:</li>
-                                            <li><a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                                            <li><a href="#" title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                                            <li><a href="#" title="Linkedin"><i class="fab fa-linkedin"></i></a></li>
-                                            <li><a href="#" title="Instagram"><i class="fab fa-instagram"></i></a></li>
+                                            <li>
+                                                <a href="#" onclick="shareProduct('facebook', '<%= product.title %>', '<%= product._id %>')" title="Facebook">
+                                                    <i class="fab fa-facebook-f"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="shareProduct('twitter', '<%= product.title %>', '<%= product._id %>')" title="Twitter">
+                                                    <i class="fab fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="shareProduct('linkedin', '<%= product.title %>', '<%= product._id %>')" title="Linkedin">
+                                                    <i class="fab fa-linkedin"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="shareProduct('whatsapp', '<%= product.title %>', '<%= product._id %>')" title="WhatsApp">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <hr>
@@ -601,7 +637,32 @@
                             offer: <%= product.baseOfferPrice || 0 %>
                         }
                     };
-                    
+                    function shareProduct(platform, title, productId) {
+        const url = `${window.location.origin}/products/${productId}`;
+        const encodedUrl = encodeURIComponent(url);
+        const text = encodeURIComponent(`Check out this product: ${title}`);
+        
+        let shareUrl = '';
+        
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`;
+                break;
+            case 'linkedin':
+                shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${text}`;
+                break;
+            case 'whatsapp':
+                shareUrl = `https://wa.me/?text=${text}%20${encodedUrl}`;
+                break;
+            default:
+                return;
+        }
+        
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
                     function updatePriceOnSelect(productId) {
                         var colorSelect = document.getElementById('color-variant-select');
                         var measurementSelect = document.getElementById('measurement-variant-select');
@@ -666,15 +727,14 @@
                                 const colorSelect = document.getElementById('color-variant-select');
                                 const measurementSelect = document.getElementById('measurement-variant-select');
                                 
-                                // Check for required variant selection
-                                if (colorSelect && colorSelect.options.length > 1 && (!colorIndex || colorIndex === "")) {
-                                    this.showError('Please select a color variant.', feedbackEl);
-                                    return false;
-                                }
-                                if (measurementSelect && measurementSelect.options.length > 1 && (!measurementIndex || measurementIndex === "")) {
-                                    this.showError('Please select a measurement variant.', feedbackEl);
-                                    return false;
-                                }
+                                if (colorSelect && colorSelect.style.display !== 'none' && (!colorIndex || colorIndex === "")) {
+            this.showError('Please select a color variant.', feedbackEl);
+            return false;
+        }
+        if (measurementSelect && measurementSelect.style.display !== 'none' && (!measurementIndex || measurementIndex === "")) {
+            this.showError('Please select a measurement variant.', feedbackEl);
+            return false;
+        }
                     
                                 if (addToCartBtn) {
                                     addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
@@ -898,7 +958,7 @@
                             cart.updateCartCount(cart.getGuestCart().length);
                         <% } %>
                     });
-                    </script>
+                </script>
             </div>
         </div>
     </div>
